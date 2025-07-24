@@ -22,7 +22,11 @@ CREATE TABLE bike_lanes_raw (
 );
 
 -- Import CSV into staging table
-\COPY bike_lanes_raw FROM '/import/cycling-network-4326.csv' WITH CSV HEADER
+COPY bike_lanes_raw FROM '/import/cleaned-bike-lanes.csv' WITH (
+    FORMAT csv,
+    HEADER,
+    NULL ''
+);
 
 -- Convert GeoJSON text into real geometry and move into the real table
 INSERT INTO bike_lanes (
