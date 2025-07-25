@@ -40,3 +40,6 @@ SELECT
     dir_loworder, infra_loworder, infra_highorder, converted,
     ST_SetSRID(ST_GeomFromGeoJSON(geometry), 4326)
 FROM bike_lanes_raw;
+
+-- Cleanup
+DROP TABLE bike_lanes_raw;
