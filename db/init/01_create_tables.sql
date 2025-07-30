@@ -19,3 +19,18 @@ CREATE TABLE bike_lanes (
     converted INTEGER,
     geom GEOMETRY(MULTILINESTRING, 4326)
 );
+
+CREATE TABLE neighbourhoods (
+    _id SERIAL PRIMARY KEY,
+    area_id INTEGER,
+    area_attr_id INTEGER,
+    parent_area_id INTEGER,
+    area_short_code TEXT,
+    area_long_code TEXT,
+    area_name TEXT,
+    area_desc TEXT,
+    classification TEXT,
+    classification_code TEXT,
+    objectid INTEGER,
+    geom geometry(MultiPolygon, 4326)
+);
