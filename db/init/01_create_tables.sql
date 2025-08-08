@@ -17,11 +17,11 @@ CREATE TABLE bike_lanes (
     infra_loworder TEXT,
     infra_highorder TEXT,
     converted INTEGER,
-    geom GEOMETRY(MULTILINESTRING, 4326)
+    geometry GEOMETRY(MULTILINESTRING, 4326)
 );
 
 CREATE TABLE neighbourhoods (
-    _id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     area_id INTEGER,
     area_attr_id INTEGER,
     parent_area_id INTEGER,
@@ -32,5 +32,18 @@ CREATE TABLE neighbourhoods (
     classification TEXT,
     classification_code TEXT,
     objectid INTEGER,
-    geom geometry(MultiPolygon, 4326)
+    geometry geometry(MultiPolygon, 4326)
+);
+
+CREATE TABLE parks (
+    id SERIAL PRIMARY KEY,
+    location_id INT,
+    asset_id INT,
+    name TEXT,
+    type TEXT,
+    amenities TEXT,
+    address TEXT,
+    phone TEXT,
+    url TEXT,
+    geometry GEOMETRY(Point, 4326)
 );
