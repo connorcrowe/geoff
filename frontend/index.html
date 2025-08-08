@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Geoff</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        #map { height: 500px; margin-top: 1em; }
+        textarea { width: 100%; height: 60px; }
+        pre { background: #eee; padding: 1em; }
+    </style>
+</head>
+<body>
+    <h1>Geoff: Natural Language Spatial Queries and Maps</h1>
+
+    <textarea id="prompt">Show bike lanes...</textarea><br/>
+    <button onclick="sendPrompt()">Submit</button>
+
+    <h3>Generated SQL</h3>
+    <pre id="sqlOutput"></pre>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let map = L.map('map').setView([43.65, -79.38], 12)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+
+        let geojsonLayer = null
+
+        async function sendPrompt() {
+            const prompt = document.getElementById("prompt").value
+            const res = await fetch("http://localhost:8000/query", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+        })
+
+        const data = await res.json()
+        document.getElementById("sqlOutput").innerText = data.sql
+
+        if (geojsonLayer) map.removeLayer(geojsonLayer)
+        geojsonLayer = L.geoJSON(data.geojson).addTo(map)
+        map.fitBounds(geojsonLayer.getBounds())
+        }
+    </script>
+</body>
+</html>
