@@ -9,18 +9,43 @@
         #map { height: 500px; margin-top: 1em; }
         textarea { width: 100%; height: 60px; }
         pre { background: #eee; padding: 1em; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 6px; text-align: left; }
     </style>
 </head>
 <body>
-    <h1>Geoff: Natural Language Spatial Queries and Maps</h1>
+    <h1>Geoff: Natural Language Spatial Queries and Map Visualization</h1>
 
+    <p>Ask Geoff to show you something about Toronto. It has a limited context, but it can show information about the items below, including spatial combinations of those.</p>
+    <p>Some examples:</p>
+    <ul>
+        <li>Show all bike lanes in the Annex neighbourhood.</li>
+        <li>Show parks bigger than 100 square meters.</li>
+        <li>Show bike lanes upgraded after 2020 within 400 meters of a park.</li>
+    </ul>
+    <p>Geoff can currently answer questions about:</p>
+    <ul>
+        <li><b>Bike Lanes</b> <i>(street name, year installed, year upgraded, type)</i></li>
+        <li><b>Neighbourhoods</b> <i>(name, classification)</i></li>
+        <li><b>Parks & Rec facilities</b> <i>(name, type, amenities)</i></li>
+    </ul>
+
+    <h3>Ask Geoff</h3>
     <textarea id="prompt">Show bike lanes...</textarea><br/>
     <button onclick="sendPrompt()">Submit</button>
 
     <h3>Generated SQL</h3>
     <pre id="sqlOutput"></pre>
 
+    <h3>Map</h3>
     <div id="map"></div>
+
+    <h3>Query Results (first 10 rows)</h3>
+    <table id="resultsTable">
+        <thead id="resultsHead"></thead>
+        <tbody id="resultsBody"></tbody>
+    </table>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -35,14 +60,48 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt })
-        })
+            })
 
-        const data = await res.json()
-        document.getElementById("sqlOutput").innerText = data.sql
+            const data = await res.json()
+            document.getElementById("sqlOutput").innerText = data.sql || ""
 
-        if (geojsonLayer) map.removeLayer(geojsonLayer)
-        geojsonLayer = L.geoJSON(data.geojson).addTo(map)
-        map.fitBounds(geojsonLayer.getBounds())
+            if (geojsonLayer) map.removeLayer(geojsonLayer)
+            if (data.geojson && data.geojson.features.length > 0) {
+                geojsonLayer = L.geoJSON(data.geojson).addTo(map)
+                map.fitBounds(geojsonLayer.getBounds())
+            }
+
+            updateTable(data.columns, data.rows)
+        }
+
+        function updateTable(columns, rows) {
+            const head = document.getElementById("resultsHead")
+            const body = document.getElementById("resultsBody")
+
+            head.innerHTML = ""
+            body.innerHTML = ""
+
+            if (!columns || columns.length === 0 || !rows) return
+
+            // Header
+            const trHead = document.createElement("tr")
+            columns.forEach(col => {
+                const th = document.createElement("th")
+                th.textContent = col
+                trHead.appendChild(th)
+            })
+            head.appendChild(trHead)
+
+            // Body (limit 10 rows)
+            rows.slice(0, 10).forEach(row => {
+                const tr = document.createElement("tr")
+                row.forEach(val => {
+                    const td = document.createElement("td")
+                    td.textContent = val
+                    tr.appendChild(td)
+                })
+                body.appendChild(tr)
+            })
         }
     </script>
 </body>
