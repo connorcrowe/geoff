@@ -18,16 +18,15 @@ Planners, NGOs, activists, public employees have questions with geospatial answe
 ## Current
 ### State of Development
 - **DB**: Created via 2 docker containers, including full ETL pipeline to ingest and load data from API. Currently includes datasets on bike lanes, neighbourhoods, and parks.
-- **Backend**: Prototype setup with `FastAPI` that can accept queries from the frontend, call the LLM to get a SQL query back, and return the results of that query to the frontend.
+- **Backend**: Prototype setup with `FastAPI` that can accept queries from the frontend, call the LLM to get a SQL query back, and return the results of that query to the frontend. Uses keyword matching to detect which tables are relevant and sends their schemas in the system prompt to the LLM. Auto-retries if SQL does not execute.
 - **Frontend**: Can accept a natural language prompt, and display results on a map as well as in a preview table.
 - **LLM**: Running local model `sqlcoder` via `Ollama` on home-lab. Results are... mixed.
 
 - **Next Objectives**:
-    - Auto-retry if SQL from LLM is not valid and executable
     - Add few-shot examples to system prompt to help LLM understand geospatial functions (intersections, buffers, areas & other aggregates, etc.)
     - Experiment with other models
-    - Add prompt pre-processing to avoid needing to pass entire DB schema to LLM as system prompt
     - Improve visualization of results
+    - If necessary, switch from keyword based table matching to vector embedded database
 
 **Status**: DB structure is done and expandable. The frontend is showing results! Now to improve the model reliability and add more data.
 
@@ -38,7 +37,6 @@ Planners, NGOs, activists, public employees have questions with geospatial answe
 - Parks and Recreation facilities
 
 **Current Ability**
-- Manual spatial queries on data (cleaned and joined)
 - Mid-accuracy spatial SQL generated from English prompt
     - Models in experimentation: `mistral`, `mixtral`, `sqlcoder`, `llama3.2`
 
@@ -58,7 +56,6 @@ Planners, NGOs, activists, public employees have questions with geospatial answe
 
 ### Limits
 - Model is inconsistent
-- Does not validate SQL before attempting execution
 - Model doesn't fully understand spatial functions
 - Model occasionally adds requirements not asked for
 
@@ -79,7 +76,6 @@ Planners, NGOs, activists, public employees have questions with geospatial answe
         - Including further SQL tuned models
     - Custom fine-tuning on spatial SQL
     - Post-processing
-        - Automatic syntax validation
         - Schema-aware validation
     - Stretch: Few-shot cache
     - Stretch: Retrieval layer
