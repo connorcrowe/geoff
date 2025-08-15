@@ -2,5 +2,7 @@
 venv
 
 backend/__pycache__
+db/etl/datasets/__pycache__
+db/etl/utils/__pycache__
 
 db_v1/import
