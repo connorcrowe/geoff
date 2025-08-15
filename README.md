@@ -2,6 +2,8 @@
 ###### *Connor Crowe*
 **GEOFF *(GEO-spatial Fact Finder)*** takes a prompt in natural language, converts it into a spatial SQL query, and displays the result on a map - shortening the time from question to insight for planners, geographers, and more.
 
+![](images/example-08-15.png)
+
 ## Problem Statement
 **Motivation**
 
