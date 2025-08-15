@@ -4,7 +4,7 @@ SELECT
     CAST(_id AS integer) AS id,
     CAST(locationid AS integer) AS location_id,
     CAST(asset_id AS integer) AS asset_id,
-    NULLIF(asset_name, '')::text AS asset_name,
+    NULLIF(asset_name, '')::text AS name,
     NULLIF(type, '')::text AS type,
     NULLIF(amenities, '')::text AS amenities,
     NULLIF(address, '')::text AS address,
