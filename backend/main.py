@@ -2,12 +2,13 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from llm import prompt_to_sql
 from dotenv import load_dotenv
 from pathlib import Path
 import os
 import json
 from shapely import wkb
+
+from llm import generate_sql_from_prompt
 
 # Load .env from parent directory
 env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -32,41 +33,12 @@ conn = psycopg2.connect(
     port=os.getenv("DB_PORT")
 )
 
-@app.post("/query")
-async def run_query(request: Request):
-    data = await request.json()
-    prompt = data.get("prompt", "")
+# Set the search_path for the connection
+with conn.cursor() as cur:
+    cur.execute("SET search_path TO data")
+conn.commit()
 
-    max_retries = 2
-    attempts = 0
-    sql = prompt_to_sql(prompt)
-
-    cur = conn.cursor()
-
-    while attempts <= max_retries:
-
-        try:
-            cur.execute(sql)
-            break
-        except Exception as e:
-            conn.rollback()
-            attempts += 1
-            if attempts > max_retries:
-                return {"error": str(e), "  sql": sql}
-
-            # Attach error for next attempt
-            print("[ERROR] Returned SQL does not execute. Reattempting.")
-            fix_prompt = {
-                f"Your answer, the following SQL, caused an error:\n{sql}\n\n"
-                f"Error message:\n{str(e)}\n\n"
-                f"Please return a corrected SQL query only."
-                f"The desired answer is: '{prompt}'."
-            }
-            sql = prompt_to_sql(fix_prompt)
-
-    colnames = [desc[0] for desc in cur.description]
-    rows = cur.fetchall()
-
+def convert_rows_to_geojson(rows, colnames):
     # Identify geometry column (first that can be parsed as WKB)
     geom_index = None
     for i, name in enumerate(colnames):
@@ -76,11 +48,9 @@ async def run_query(request: Request):
                     wkb.loads(r[i], hex=True)
                     geom_index = i
                     break
-            except Exception:
-                continue
-        if geom_index is not None:
-            break
-
+            except Exception: continue
+        if geom_index is not None: break
+     
     features = []
     table_rows = []
     for row in rows:
@@ -113,7 +83,39 @@ async def run_query(request: Request):
 
     # Remove geometry column from table header
     table_columns = [c for i, c in enumerate(colnames) if i != geom_index]
+    return geojson, table_columns, table_rows
 
+def generate_and_run_sql(user_prompt: str, max_retries: int=2):
+    attempts = 0
+    sql = generate_sql_from_prompt(user_prompt)
+
+    while attempts <= max_retries:
+        try:
+            cur = conn.cursor()
+            cur.execute(sql)
+            rows = cur.fetchall()
+            colnames = [desc[0] for desc in cur.description]
+            return rows, colnames, sql, None
+        except Exception as e:
+            print("(MAIN)[ERROR] Returned SQL does not execute. Reattempting.")
+            conn.rollback()
+            attempts += 1
+            if attempts > max_retries:
+                return None, None, sql, str(e)
+            
+            # Try again with corrective prompt
+            sql = generate_sql_from_prompt(user_prompt, previous_sql=sql, error_message=str(e))
+
+@app.post("/query")
+async def handle_user_query(request: Request):
+    data = await request.json()
+    user_prompt = data.get("prompt", "")
+
+    rows, colnames, sql, error = generate_and_run_sql(user_prompt)
+    if error:
+        return {"error": error, "sql": sql}
+
+    geojson, table_columns, table_rows = convert_rows_to_geojson(rows, colnames)
     return {
         "sql": sql.strip(),
         "geojson": geojson,
