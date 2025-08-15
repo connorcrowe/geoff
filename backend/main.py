@@ -37,14 +37,32 @@ async def run_query(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
 
+    max_retries = 2
+    attempts = 0
     sql = prompt_to_sql(prompt)
 
     cur = conn.cursor()
-    try:
-        cur.execute(sql)
-    except Exception as e:
-        conn.rollback()
-        return {"error": str(e), "sql": sql}
+
+    while attempts <= max_retries:
+
+        try:
+            cur.execute(sql)
+            break
+        except Exception as e:
+            conn.rollback()
+            attempts += 1
+            if attempts > max_retries:
+                return {"error": str(e), "  sql": sql}
+
+            # Attach error for next attempt
+            print("[ERROR] Returned SQL does not execute. Reattempting.")
+            fix_prompt = {
+                f"Your answer, the following SQL, caused an error:\n{sql}\n\n"
+                f"Error message:\n{str(e)}\n\n"
+                f"Please return a corrected SQL query only."
+                f"The desired answer is: '{prompt}'."
+            }
+            sql = prompt_to_sql(fix_prompt)
 
     colnames = [desc[0] for desc in cur.description]
     rows = cur.fetchall()
