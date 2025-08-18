@@ -7,6 +7,7 @@ schemas = {
         street_name TEXT,           -- primary street name where the bike lane is located
         from_street TEXT,           -- cross street marking the start of the lane
         to_street TEXT,             -- cross street marking the end of the lane
+        lane_type TEXT,       -- the type of infrastructure (e.g. sharrows, bike lane, multi-use trail, etc.)
         geometry GEOMETRY(LineString, 4326) -- spatial geometry of the bike lane
     );
     """,
