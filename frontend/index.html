@@ -34,9 +34,13 @@
     <h3>Ask Geoff</h3>
     <textarea id="prompt">Show bike lanes...</textarea><br/>
     <button onclick="sendPrompt()">Submit</button>
-
+    
     <h3>Generated SQL</h3>
     <pre id="sqlOutput"></pre>
+    
+    <h3>Manual SQL Execution</h3>
+    <textarea id="manualSql" placeholder="Enter SQL here..."></textarea><br/>
+    <button onclick="runManualSql()">Run SQL</button>
 
     <h3>Map</h3>
     <div id="map"></div>
@@ -53,6 +57,26 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
         let geojsonLayer = null
+
+        async function runManualSql() {
+        const sql = document.getElementById("manualSql").value
+        const res = await fetch("http://localhost:8000/manual_query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sql })
+        })
+        const data = await res.json()
+
+        document.getElementById("sqlOutput").innerText = sql
+
+        if (geojsonLayer) map.removeLayer(geojsonLayer)
+        if (data.geojson && data.geojson.features.length > 0) {
+            geojsonLayer = L.geoJSON(data.geojson).addTo(map)
+            map.fitBounds(geojsonLayer.getBounds())
+        }
+
+        updateTable(data.columns, data.rows)
+        }
 
         async function sendPrompt() {
             const prompt = document.getElementById("prompt").value

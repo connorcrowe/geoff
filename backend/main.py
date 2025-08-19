@@ -1,22 +1,29 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-import psycopg2
-from psycopg2.extras import RealDictCursor
-from dotenv import load_dotenv
-from pathlib import Path
+# backend/main.py
+
 import os
 import json
+from dotenv import load_dotenv
+from pathlib import Path
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from shapely import wkb
 
 from llm import generate_sql_from_prompt
+
+# === CONFIG === 
+DEBUG_MODE = True
 
 # Load .env from parent directory
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
-app = FastAPI()
 
 # Allow requests from localhost
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,7 +42,7 @@ conn = psycopg2.connect(
 
 # Set the search_path for the connection
 with conn.cursor() as cur:
-    cur.execute("SET search_path TO data")
+    cur.execute("SET search_path TO data, public")
 conn.commit()
 
 def convert_rows_to_geojson(rows, colnames):
@@ -50,7 +57,7 @@ def convert_rows_to_geojson(rows, colnames):
                     break
             except Exception: continue
         if geom_index is not None: break
-     
+
     features = []
     table_rows = []
     for row in rows:
@@ -80,7 +87,6 @@ def convert_rows_to_geojson(rows, colnames):
         "type": "FeatureCollection",
         "features": features
     }
-
     # Remove geometry column from table header
     table_columns = [c for i, c in enumerate(colnames) if i != geom_index]
     return geojson, table_columns, table_rows
@@ -122,3 +128,25 @@ async def handle_user_query(request: Request):
         "columns": table_columns,
         "rows": table_rows
     }
+
+@app.post("/manual_query")
+async def handle_manual_query(request: Request):
+    data = await request.json()
+    sql = data.get("sql", "")
+
+    try:
+        cur = conn.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        colnames = [desc[0] for desc in cur.description]
+        geojson, table_columns, table_rows = convert_rows_to_geojson(rows, colnames)
+        return {
+            "sql": sql.strip(),
+            "geojson": geojson,
+            "columns": table_columns,
+            "rows": table_rows
+        }
+    except Exception as e:
+        print(e)
+        conn.rollback()
+        return {"error": str(e), "sql": sql}
