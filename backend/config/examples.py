@@ -50,5 +50,38 @@ examples = [
             WHERE lane_type ILIKE '%contraflow%';
         """
     },
+    
+    # --- Single table: Neighbourhoods
+    {
+        "tables": ["neighbourhoods"],
+        "user_query": "Show the neighbourhoods of Toronto",
+        "sql":"""
+            SELECT geometry, area_name FROM neighbourhoods;
+        """
+    },
+    {
+        "tables": ["neighbourhoods"],
+        "user_query": "Which neighbourhoods are classified as improvement areas?",
+        "sql":"""
+            SELECT geometry, area_name, classification FROM neighbourhoods
+            WHERE classification_code ILIKE '%NIA%';
+        """
+    },
+    {
+        "tables": ["neighbourhoods"],
+        "user_query": "Which neighbourhoods are classified as emerging neighbourhoods?",
+        "sql":"""
+            SELECT geometry, area_name, classification FROM neighbourhoods
+            WHERE classification_code ILIKE '%EN%';
+        """
+    },
+        {
+        "tables": ["neighbourhoods"],
+        "user_query": "Which neighbourhoods are the biggest?",
+        "sql":"""
+            SELECT geometry, area_name, ROUND(ST_Area(geometry::geography)) AS area_sq_m FROM neighbourhoods
+            ORDER BY area_sq_m DESC LIMIT 10;
+        """
+    },
 
 ]
