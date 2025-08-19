@@ -7,7 +7,8 @@ schemas = {
         street_name TEXT,           -- primary street name where the bike lane is located
         from_street TEXT,           -- cross street marking the start of the lane
         to_street TEXT,             -- cross street marking the end of the lane
-        lane_type TEXT,       -- the type of infrastructure (e.g. sharrows, bike lane, multi-use trail, etc.)
+        lane_type TEXT,             -- the type of infrastructure (e.g. sharrows, bike lane, multi-use trail, etc.)
+        converted TEXT,             -- year the bike lane was converted
         geometry GEOMETRY(LineString, 4326) -- spatial geometry of the bike lane
     );
     """,
@@ -16,8 +17,8 @@ schemas = {
     CREATE TABLE neighbourhoods (
         id SERIAL PRIMARY KEY,
         area_name TEXT,             -- official neighbourhood name
-        area_desc TEXT,              -- descriptive text about the neighbourhood
-        classification TEXT,         -- classification for improvement or zoning type
+        classification_code TEXT,   -- classification tag for improvement or emerging type
+        classification TEXT,        -- classification title for improvement or emerging type
         geometry GEOMETRY(Polygon, 4326) -- boundary polygon for the neighbourhood
     );
     """,
