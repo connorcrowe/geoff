@@ -28,7 +28,7 @@ schemas = {
         id SERIAL PRIMARY KEY,
         name TEXT,                   -- official park name
         type TEXT,                   -- category of park 
-        amenities TEXT,              -- amenities in the park
+        amenities TEXT,              -- list of amenities in the park
         geometry GEOMETRY(Polygon, 4326) -- boundary polygon for the park
     );
     """

@@ -84,4 +84,43 @@ examples = [
         """
     },
 
+    # --- Single table: Parks
+    {
+        "tables": ["parks"],
+        "user_query": "Show the parks in Toronto",
+        "sql":"""
+            SELECT geometry, name, type FROM parks;
+        """
+    },
+    {
+        "tables": ["parks"],
+        "user_query": "Show the community centres in Toronto",
+        "sql":"""
+            SELECT geometry, name FROM parks WHERE type = "Community Centre";
+        """
+    },
+    {
+        "tables": ["parks"],
+        "user_query": "Show the dog parks in Toronto",
+        "sql":"""
+            SELECT geometry, name, amenities FROM parks WHERE amenities ILIKE '%dog%';
+        """
+    },
+    {
+        "tables": ["parks"],
+        "user_query": "Show parks with playgrounds",
+        "sql":"""
+            SELECT geometry, name, amenities FROM parks WHERE amenities ILIKE '%playground%;
+        """
+    },
+    {
+        "tables": ["parks"],
+        "user_query": "Which parks are bigger than 100 square meters?",
+        "sql":"""
+            SELECT geometry, name, ROUND(ST_Area(geometry::geography)) AS area_sq_m FROM parks 
+            WHERE area_sq_m > 100 ORDER BY area_sq_m DESC;
+        """
+    },
+    
+
 ]

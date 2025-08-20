@@ -9,6 +9,6 @@ schema_keywords = {
         "neighbourhoods", "neighbourhood", "community", "district", "area", "ward", "region", "neighborhood"
         ],
     "parks": [
-        "park", "parks", "recreation", "rec", "green", "green space", "playground", "dog", "pool", "gym", "field"
+        "park", "parks", "recreation", "rec", "green", "green space", "playground", "dog", "pool", "gym", "field", "community centre"
         ]
 }

@@ -29,7 +29,7 @@ def build_schema_prompt(table_list):
     """Return only relevant schemas as a string for LLM system prompt."""
     return "\n".join(schemas[table] for table in table_list if table in schemas)
 
-def build_examples_prompt(tables, n=4):
+def build_examples_prompt(tables, n=5):
     """Format example list into Q/A style for LLM system prompt."""
     formatted = []
 
