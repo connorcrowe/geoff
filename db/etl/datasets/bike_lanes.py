@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine, text
-from datetime import datetime
 from utils.toronto_ckan import fetch_resource_ckan
 
 # Specific package to fetch from CKAN Toronto
