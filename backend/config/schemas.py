@@ -61,7 +61,7 @@ schemas = {
     "police_stations": """
     CREATE TABLE police_stations (
         id SERIAL PRIMARY KEY,
-        facility TEXT,               -- name of station
+        name TEXT,               -- name of station
         address TEXT,                -- street address
         geometry GEOMETRY(Point, 4326) -- geometry location of the station
     );

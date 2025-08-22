@@ -73,14 +73,14 @@ examples = [
         "tables": ["fire_stations"],
         "user_query": "Show all the fire stations",
         "sql":"""
-            SELECT geometry, name, address, municipality FROM fire_stations;
+            SELECT geometry, address, municipality, year_built FROM fire_stations;
         """
     },
     {
         "tables": ["fire_stations"],
         "user_query": "Show me fire stations in North York",
         "sql":"""
-            SELECT geometry, name, address FROM fire_stations
+            SELECT geometry, address, year_built FROM fire_stations
             WHERE municipality ILIKE '%North York%';
         """
     },
@@ -88,7 +88,7 @@ examples = [
         "tables": ["fire_stations"],
         "user_query": "Show me fire stations built after 1990",
         "sql":"""
-            SELECT geometry, name, address, year_built FROM fire_stations
+            SELECT geometry, address, year_built FROM fire_stations
             WHERE year_built > 1990;
         """
     },
@@ -195,6 +195,14 @@ examples = [
         "sql":"""
             SELECT geometry, name, address, school_board_name, school_type_desc FROM schools
             WHERE school_type_desc ILIKE '%Public%';
+        """
+    },
+    {
+        "tables": ["schools"],
+        "user_query": "Show me private schools",
+        "sql":"""
+            SELECT geometry, name, address, school_board_name, school_type_desc FROM schools
+            WHERE school_type_desc ILIKE '%Private%';
         """
     },
     {
