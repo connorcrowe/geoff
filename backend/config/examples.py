@@ -11,7 +11,24 @@
     # },
 
 examples = [
-    # --- Single table: `bike_lanes` ---
+    # --- AMBULANCE_STATIONS
+    {
+        "tables": ["ambulance_stations"],
+        "user_query": "Where are the ambulance stations?",
+        "sql":"""
+            SELECT geometry, name, address, municipality FROM ambulance_stations;
+        """
+    },
+    {
+        "tables": ["ambulance_stations"],
+        "user_query": "Show me ems stations in Scarborough",
+        "sql":"""
+            SELECT geometry, name, address FROM ambulance_stations
+            WHERE municipality ILIKE '%Scarborough%';
+        """
+    },
+
+    # --- BIKE_LANES
     {
         "tables": ["bike_lanes"],
         "user_query": "Show bike lanes installed after 2020",
@@ -51,7 +68,32 @@ examples = [
         """
     },
     
-    # --- Single table: Neighbourhoods
+    # --- FIRE_STATIONS
+    {
+        "tables": ["fire_stations"],
+        "user_query": "Show all the fire stations",
+        "sql":"""
+            SELECT geometry, name, address, municipality FROM fire_stations;
+        """
+    },
+    {
+        "tables": ["fire_stations"],
+        "user_query": "Show me fire stations in North York",
+        "sql":"""
+            SELECT geometry, name, address FROM fire_stations
+            WHERE municipality ILIKE '%North York%';
+        """
+    },
+    {
+        "tables": ["fire_stations"],
+        "user_query": "Show me fire stations built after 1990",
+        "sql":"""
+            SELECT geometry, name, address, year_built FROM fire_stations
+            WHERE year_built > 1990;
+        """
+    },
+
+    # --- NEIGHBOURHOODS
     {
         "tables": ["neighbourhoods"],
         "user_query": "Show the neighbourhoods of Toronto",
@@ -84,7 +126,7 @@ examples = [
         """
     },
 
-    # --- Single table: Parks
+    # --- PARKS
     {
         "tables": ["parks"],
         "user_query": "Show the parks in Toronto",
@@ -121,6 +163,56 @@ examples = [
             WHERE area_sq_m > 100 ORDER BY area_sq_m DESC;
         """
     },
+
+    # --- POLICE_STATIONS
+    {
+        "tables": ["police_stations"],
+        "user_query": "Show me police stations",
+        "sql":"""
+            SELECT geometry, name, address FROM police_stations;
+        """
+    },
+
+    # --- SCHOOLS
+    {
+        "tables": ["schools"],
+        "user_query": "Show me schools",
+        "sql":"""
+            SELECT geometry, name, address, school_board_name, school_type_desc FROM schools;
+        """
+    },
+    {
+        "tables": ["schools"],
+        "user_query": "Where are the french schools?",
+        "sql":"""
+            SELECT geometry, name, address, school_board_name, school_type_desc FROM schools
+            WHERE school_type_desc ILIKE '%French%';
+        """
+    },
+    {
+        "tables": ["schools"],
+        "user_query": "How many public schools are there?",
+        "sql":"""
+            SELECT geometry, name, address, school_board_name, school_type_desc FROM schools
+            WHERE school_type_desc ILIKE '%Public%';
+        """
+    },
+    {
+        "tables": ["schools"],
+        "user_query": "Which schools are in the Toronto District School Board?",
+        "sql":"""
+            SELECT geometry, name, address, school_type_desc FROM schools
+            WHERE school_board_name ILIKE '%Toronto District School Board%';
+        """
+    },
     
+    # --- Single table: Streets
+    # {
+    #     "tables": ["streets"],
+    #     "user_query": "Show the streets of Toronto",
+    #     "sql":"""
+    #         SELECT geometry, name, type FROM streets;
+    #     """
+    # },
 
 ]

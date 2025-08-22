@@ -5,6 +5,7 @@ SELECT
     NULLIF(address_full, '')::text as address,
     NULLIF(municipality, '')::text as municipality,
     CAST(ems_id AS integer) AS ems_id,
+    NULLIF(place_name, '')::text as name,
     NULLIF(ems_name, '')::text as ems_name,
     NULLIF(ems_website, '')::text as ems_website,
     ST_SetSRID(ST_GeomFromGeoJSON(geometry), 4326) AS geometry

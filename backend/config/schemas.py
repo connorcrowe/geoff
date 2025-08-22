@@ -1,4 +1,17 @@
 schemas = {
+    "ambulance_stations": """
+    CREATE TABLE ambulance_stations (
+        id SERIAL PRIMARY KEY,
+        address TEXT,               -- street address
+        municipality TEXT,          -- municipality
+        name TEXT,                  -- name
+        ems_id INT,                 -- ems id number
+        ems_name TEXT,              -- name of stations
+        ems_website TEXT,           -- website
+        geometry GEOMETRY(Point, 4326) -- geometry location of the station
+    );
+    """,
+    
     "bike_lanes": """
     CREATE TABLE bike_lanes (
         id SERIAL PRIMARY KEY,
@@ -10,6 +23,18 @@ schemas = {
         lane_type TEXT,             -- the type of infrastructure (e.g. sharrows, bike lane, multi-use trail, etc.)
         converted TEXT,             -- year the bike lane was converted
         geometry GEOMETRY(LineString, 4326) -- spatial geometry of the bike lane
+    );
+    """,
+
+    "fire_stations": """
+    CREATE TABLE fire_stations (
+        id SERIAL PRIMARY KEY,
+        address TEXT,               -- street address of fire stations
+        municipality TEXT,          -- municipality of station
+        station_no TEXT,            -- number of station
+        year_built INT,             -- year station built
+        type TEXT,                  -- Fire Station or Operaitons centre
+        geometry GEOMETRY(Point, 4326) -- geometry location of the station
     );
     """,
 
@@ -29,13 +54,44 @@ schemas = {
         name TEXT,                   -- official park name
         type TEXT,                   -- category of park 
         amenities TEXT,              -- list of amenities in the park
-        geometry GEOMETRY(Polygon, 4326) -- boundary polygon for the park
+        geometry GEOMETRY(Point, 4326) -- point location for the park
+    );
+    """,
+
+    "police_stations": """
+    CREATE TABLE police_stations (
+        id SERIAL PRIMARY KEY,
+        facility TEXT,               -- name of station
+        address TEXT,                -- street address
+        geometry GEOMETRY(Point, 4326) -- geometry location of the station
+    );
+    """,
+
+    "schools": """
+    CREATE TABLE schools (
+        id SERIAL PRIMARY KEY,
+        name TEXT,                   -- name of the school
+        school_type TEXT,            -- short code for type (FP - French Public, FS - French Separate, EP - English Public, ES - English Separate, PR - Private)
+        school_type_desc TEXT,       -- long form of type
+        school_board_name TEXT,      -- school board name
+        address TEXT,                -- street address
+        geometry GEOMETRY(Point, 4326) -- geometry location of the station
     );
     """
+
+    # "streets": """
+    # CREATE TABLE streets (
+    #     id SERIAL PRIMARY KEY,
+    #     name TEXT,                   -- official street name
+    #     type TEXT,                   -- category of roadway (OSM 'highway' type)
+    #     geometry GEOMETRY(LineString, 4326) -- geometry of the street
+    # );
+    # """
 }
 
 schema_descriptions = {
     "bike_lanes": "Bike lane segments in Toronto with installation and upgrade years, location street names, and geospatial geometry.",
     "neighbourhoods": "Toronto neighbourhood boundaries with descriptions and improvement classification.",
-    "parks": "Toronto parks including type, amenities, and location boundaries."
+    "parks": "Toronto parks including type, amenities, and location boundaries.",
+    "streets": "All roads and streets in Toronto, with their associated OpenStreetMap 'highway' type."
 }
