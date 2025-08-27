@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from services import query_service
+from config.examples import examples
 
 router = APIRouter()
 
@@ -7,6 +8,7 @@ router = APIRouter()
 async def handle_query(req: Request):
     data = await req.json()
     prompt = data.get("prompt", "")
+    print("PROMPT", prompt)
     return query_service.handle_user_query(prompt)
 
 @router.post("/manual_query")
@@ -14,3 +16,7 @@ async def handle_manual_query(req: Request):
     data = await req.json()
     sql = data.get("sql", "")
     return query_service.handle_manual_query(sql)
+
+@router.get("/examples")
+async def get_examples():
+    return [{"user_query": e["user_query"]} for e in examples]

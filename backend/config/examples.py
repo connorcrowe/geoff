@@ -143,7 +143,7 @@ examples = [
     },
     {
         "tables": ["parks"],
-        "user_query": "Show the dog parks in Toronto",
+        "user_query": "Where are dog parks located?",
         "sql":"""
             SELECT geometry, name, amenities FROM parks WHERE amenities ILIKE '%dog%';
         """
