@@ -26,16 +26,25 @@ const handleSubmit = async () => {
     body: JSON.stringify({ prompt: query }),
   })
   const data = await res.json()
-  setGeojson(data.geojson)
-  setColumns(data.columns || [])
 
-  // Map array rows to objects with id
+  // Ensure features exist
+  const featuresWithId = data.geojson?.features?.map((f, i) => ({
+    ...f,
+    id: i, // attach synthetic id
+    properties: { ...f.properties, _id: i }, // store also in properties for reference
+  })) || []
+
+  const geojsonWithIds = { ...data.geojson, features: featuresWithId }
+
+  // Map rows to objects with the same id
   const mappedRows = data.rows?.map((r, i) =>
-      Array.isArray(r)
-        ? { id: i, ...Object.fromEntries(data.columns.map((col, j) => [col, r[j]])) }
-        : { id: i, ...r }
-    ) || []
+    Array.isArray(r)
+      ? { id: i, ...Object.fromEntries(data.columns.map((col, j) => [col, r[j]])) }
+      : { id: i, ...r }
+  ) || []
 
+  setGeojson(geojsonWithIds)
+  setColumns(data.columns || [])
   setRows(mappedRows)
   setSelectedFeatureId(null) // reset selection
 }
