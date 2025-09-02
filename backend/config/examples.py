@@ -14,7 +14,7 @@ examples = [
     # --- AMBULANCE_STATIONS
     {
         "tables": ["ambulance_stations"],
-        "user_query": "Where are the ambulance stations?",
+        "user_query": "Show all ambulance stations",
         "sql":"""
             SELECT geometry, name, address, municipality FROM ambulance_stations;
         """
@@ -31,16 +31,16 @@ examples = [
     # --- BIKE_LANES
     {
         "tables": ["bike_lanes"],
-        "user_query": "Show bike lanes installed after 2020",
+        "user_query": "Show all bike lanes, their type, and when they were installed",
         "sql":"""
-            SELECT * FROM bike_lanes WHERE installed_year >= 2020;
+            SELECT geometry, street_name, install_year FROM bike_lanes ORDER BY installed_year DESC;
         """
     },
     {
         "tables": ["bike_lanes"],
-        "user_query": "Show all bike lanes and when they were installed",
+        "user_query": "Show bike lanes installed after 2020",
         "sql":"""
-            SELECT geometry, street_name, install_year FROM bike_lanes ORDER BY installed_year DESC;
+            SELECT * FROM bike_lanes WHERE installed_year >= 2020;
         """
     },
     {
@@ -96,7 +96,7 @@ examples = [
     # --- NEIGHBOURHOODS
     {
         "tables": ["neighbourhoods"],
-        "user_query": "Show the neighbourhoods of Toronto",
+        "user_query": "Show all the neighbourhoods",
         "sql":"""
             SELECT geometry, area_name FROM neighbourhoods;
         """
@@ -129,9 +129,9 @@ examples = [
     # --- PARKS
     {
         "tables": ["parks"],
-        "user_query": "Show the parks in Toronto",
+        "user_query": "Show every park",
         "sql":"""
-            SELECT geometry, name, type FROM parks;
+            SELECT geometry, name, type, amenities FROM parks;
         """
     },
     {
@@ -155,19 +155,11 @@ examples = [
             SELECT geometry, name, amenities FROM parks WHERE amenities ILIKE '%playground%;
         """
     },
-    {
-        "tables": ["parks"],
-        "user_query": "Which parks are bigger than 100 square meters?",
-        "sql":"""
-            SELECT geometry, name, ROUND(ST_Area(geometry::geography)) AS area_sq_m FROM parks 
-            WHERE area_sq_m > 100 ORDER BY area_sq_m DESC;
-        """
-    },
 
     # --- POLICE_STATIONS
     {
         "tables": ["police_stations"],
-        "user_query": "Show me police stations",
+        "user_query": "Show all police stations",
         "sql":"""
             SELECT geometry, name, address FROM police_stations;
         """
@@ -176,7 +168,7 @@ examples = [
     # --- SCHOOLS
     {
         "tables": ["schools"],
-        "user_query": "Show me schools",
+        "user_query": "Show all schools",
         "sql":"""
             SELECT geometry, name, address, school_board_name, school_type_desc FROM schools;
         """
