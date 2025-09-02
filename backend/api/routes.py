@@ -19,4 +19,4 @@ async def handle_manual_query(req: Request):
 
 @router.get("/examples")
 async def get_examples():
-    return [{"user_query": e["user_query"]} for e in examples]
+    return examples
