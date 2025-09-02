@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 
-export default function PromptBar({ query, setQuery, onSubmit, examples }) {
+export default function PromptBar({ query, setQuery, onSubmit, examples, loading, error }) {
   const [showExamples, setShowExamples] = useState(false)
   const [shuffledExamples, setShuffledExamples] = useState([])
   const containerRef = useRef(null)
@@ -33,10 +33,22 @@ export default function PromptBar({ query, setQuery, onSubmit, examples }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={handleFocus}
-          className="bg-transparent outline-none flex-1"
+          className={`bg-transparent outline-none flex-1 ${
+            loading ? "text-gray-500" : "text-white" 
+          }`}
           placeholder="Ask me about Toronto"
         />
-        <button onClick={onSubmit}>→</button>
+        <button
+          onClick={onSubmit}
+          disabled={loading}
+          className="flex items-center justify-center w-8 h-6"
+        >
+          {loading ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+          ) : (
+            "→"
+          )}
+        </button>
       </div>
 
       {/* Dropdown of examples */}
@@ -54,6 +66,13 @@ export default function PromptBar({ query, setQuery, onSubmit, examples }) {
               {ex.user_query}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Error Indicator */}
+      {error && (
+        <div className="text-red-400 text-sm mt-2">
+          {error}
         </div>
       )}
     </div>

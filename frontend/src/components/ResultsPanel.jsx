@@ -16,15 +16,15 @@ export default function ResultsPanel({ rows, columns, resultsSize, setResultsSiz
 
   const getResultsHeight = () => {
     switch (resultsSize) {
-      case "collapsed": return "max-h-[10%]"
-      case "expanded": return "max-h-[70%]"
-      default: return "max-h-[40%]"
+      case "collapsed": return "h-24"
+      case "expanded": return "h-96"
+      default: return "h-48"
     }
   }
 
   return (
     <div
-      className={`absolute bottom-28 left-1/2 -translate-x-1/2 w-2/3 bg-gray-800 text-white rounded-xl shadow-lg z-10 transition-all flex flex-col ${getResultsHeight()}`}
+      className={`bg-gray-800 text-white rounded-xl shadow-lg w-2/3 transition-all flex flex-col ${getResultsHeight()}`}
     >
       {/* Header Bar with title/buttons */}
       <div className="flex justify-between items-center bg-gray-900 px-4 py-2 rounded-t-xl border-b border-gray-700 flex-shrink-0">
