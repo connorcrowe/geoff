@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from services import query_service
 from config.examples import examples
+from config.schemas import get_parsed_schemas
 
 router = APIRouter()
 
@@ -20,3 +21,7 @@ async def handle_manual_query(req: Request):
 @router.get("/examples")
 async def get_examples():
     return examples
+
+@router.get("/schemas")
+async def get_schemas():
+    return get_parsed_schemas()

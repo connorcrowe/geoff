@@ -3,6 +3,7 @@ import MapView from "./components/MapView"
 import PromptBar from "./components/PromptBar"
 import ResultsPanel from "./components/ResultsPanel"
 import Chips from "./components/Chips"
+import MoreInfoModal from "./components/MoreInfoModal"
 
 export default function App() {
   const [query, setQuery] = useState("")
@@ -14,6 +15,7 @@ export default function App() {
   const [selectedFeatureId, setSelectedFeatureId] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:8000/examples")
@@ -74,6 +76,15 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen relative">
+
+      {/* More Info Modal */}
+      <button
+        onClick={() => setModalOpen(true)}
+        className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 z-20"
+      >
+        More Info
+      </button>
+      <MoreInfoModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
 
       {/* Map */}
       <div className="absolute inset-0 z-0">

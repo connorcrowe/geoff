@@ -1,3 +1,5 @@
+import re
+
 schemas = {
     "ambulance_stations": """
     CREATE TABLE ambulance_stations (
@@ -95,3 +97,22 @@ schema_descriptions = {
     "parks": "Toronto parks including type, amenities, and location boundaries.",
     "streets": "All roads and streets in Toronto, with their associated OpenStreetMap 'highway' type."
 }
+
+# Convert schemas to JSON format for frontend data dicts
+def parse_schema(sql: str):
+    columns = []
+    for line in sql.splitlines():
+        line = line.strip()
+        if not line or line.upper().startswith("CREATE TABLE") or line.startswith(");"):
+            continue
+        parts = line.split("--")
+        column_part = parts[0].strip().rstrip(",")
+        comment = parts[1].strip() if len(parts) > 1 else ""
+        match = re.match(r"(\w+)\s+(.+)", column_part)
+        if match:
+            name, col_type = match.groups()
+            columns.append({"name": name, "type": col_type, "description": comment})
+    return columns
+
+def get_parsed_schemas():
+    return {table: parse_schema(sql) for table, sql in schemas.items()}
