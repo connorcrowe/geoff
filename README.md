@@ -8,9 +8,9 @@ Ask a question, get a map. A natural language interface for querying geospatial 
 
 Geoff takes a prompt in natural language, converts it into a spatial SQL query, and displays the result on a map - shortening the time from question to insight for planners, geographers, and more.
 
-**Problem Statement**
+**Problem Statement**: *Planners, NGOs, activists, public employees and more have questions with geospatial answers but are often limited by the collection and querying of spatial data.*
 
-*Planners, NGOs, activists, public employees and more have questions with geospatial answers but are often limited by the collection and querying of spatial data.*
+---
 
 ### Features
 
@@ -24,6 +24,7 @@ Geoff takes a prompt in natural language, converts it into a spatial SQL query, 
   - Table view of query results  
   - Interactive map layer displaying queried geometries  
   - User interaction (click rows to highlight map features)  
+  - Dynamic data dictionary to see available search criteria
 - **ETL Pipeline:** Automated ingestion, cleaning, and transformation of multiple datasets, with an easy path to add more.  
 - **Extensible Dataset Support:** Current version supports 5 datasets; architecture allows seamless addition of new sources. 
 
