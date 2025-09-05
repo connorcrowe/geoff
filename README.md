@@ -1,7 +1,7 @@
 # Geoff: The GEOspatial Fact Finder
 Ask a question, get a map. A natural language interface for querying geospatial data.
 
-![](images/geoff-09-03.gif)
+![](images/recordings/geoff-09-05-small.gif)
 
 ### Motivation
 ***How many questions can be answered with a map?*** Questions from urban mobility to planning to climate response and more can be answered with geospatial data, but can require complex spatial SQL queries and data cleaning that is non-trivial for non-technical users.
