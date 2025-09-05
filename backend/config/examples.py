@@ -67,6 +67,16 @@ examples = [
             WHERE lane_type ILIKE '%contraflow%';
         """
     },
+    {
+        "tables": ["bike_lanes"],
+        "user_query": "Show all bike lanes installed after 2020 within 500m of schools",
+        "sql":"""
+            SELECT geometry, street_name, lane_type, install_year, COUNT(s.id) AS schools_within_500m
+            FROM bike_lanes bl
+            JOIN schools s ON ST_DWithin(bl.geometry::geography, s.geometry::geography, 500)
+            WHERE bl.installed_year IS NOT NULL AND bl.installed_year >= 2020 GROUP BY bl.geometry, bl.street_name, bl.lane_type, bl.installed_year;
+        """
+    },
     
     # --- FIRE_STATIONS
     {
