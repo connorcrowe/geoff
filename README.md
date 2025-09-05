@@ -25,7 +25,12 @@ Geoff takes a prompt in natural language, converts it into a spatial SQL query, 
   - Interactive map layer displaying queried geometries  
   - User interaction (click rows to highlight map features)  
 - **ETL Pipeline:** Automated ingestion, cleaning, and transformation of multiple datasets, with an easy path to add more.  
-- **Extensible Dataset Support:** Current version supports 5 datasets; architecture allows seamless addition of new sources.  
+- **Extensible Dataset Support:** Current version supports 5 datasets; architecture allows seamless addition of new sources. 
+
+|   |   |
+| - | - |
+| Dynamic data dictionary   | ![](images/screenshots/example-datadict.png) | 
+| Explorable results        | ![](images/screenshots/example-query02.png) |
 
 **Limits**
 - Model can still be inconsistent at times
