@@ -2,8 +2,6 @@ import os
 import importlib
 from datetime import datetime
 from sqlalchemy import create_engine, text
-import shapely.wkt
-
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
