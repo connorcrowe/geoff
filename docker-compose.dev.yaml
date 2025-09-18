@@ -5,10 +5,8 @@ services:
     container_name: geoff-db
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - ./db/.env
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./db/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -30,24 +28,12 @@ services:
     container_name: geoff-backend
     ports:
       - "8000:8000"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      DB_HOST: db
-      DB_PORT: 5432
+    env_file:
+      - ./backend/.env
     volumes:
       - ./backend:/app
     depends_on:
       - db
-  
-  frontend:
-    build: ./frontend
-    container_name: geoff-frontend
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
 
 volumes:
   db-data:
