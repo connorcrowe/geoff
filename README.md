@@ -48,8 +48,11 @@ flowchart LR
     subgraph Backend["FastAPI Backend"]
         Schema["Keyword-Based Schema Selection"]
         Prompt["System Prompt Builder (with few-shot cache)"]
-        SQL["LLM: NL → SQL"]
         Exec["Execute SQL and Convert to GeoJSON"]
+    end
+
+    subgraph Ollama["Large Language Model"]
+        LLM["Natural Language → SQL"]
     end
 
     subgraph Frontend["React + Tailwind Frontend"]
@@ -61,8 +64,8 @@ flowchart LR
     Backend ~~~ DB
 
     Schema --> Prompt
-    Prompt --> SQL
-    SQL --> Exec
+    Prompt --> LLM
+    LLM --> Exec
     DB --> Exec
 
     UserPrompt --> Schema
@@ -72,9 +75,11 @@ flowchart LR
 - Database
     - Docker, PostGIS, PostgreSQL, Python, SQL
 - Backend
-    - FastAPI, Ollama (local LLMs), Python
+    - FastAPI, Ollama (local LLMs), Python, geoalchemy, sqlalchemy
 - Frontend 
     - React, Tailwind CSS, Vite, Leaflet.js, OpenStreetMap, Node.js
+- Deployment & Infrastructure
+    - Docker, Nginx (server & reverse proxy), Cloud VPS, VPN Tunnel
 
 ### Datasets
 The `More Info` section of the application has a dynamically generated data dictionary that will likely be more up to date than this section.
@@ -88,9 +93,9 @@ More datasets will be added in the future. Since the backend dynamically selects
 - Schools
 
 ### Roadmap
-- ✅ Current: working ETL + backend + LLM + frontend
-- 🔜 Next: improved model, additional datasets
-- 🎯 Future: hosted demo, open contributions
+- ✅ **Current:** working ETL + backend + LLM + frontend
+- 🔜 **Next:** host dedicated demo (*soon!*), mobile-friendly, more datasets
+- 🎯 **Future:** open contributions, local setup instructions
 
 ### Contributing
 *Suggestions & feedback are currently welcome. Open contribution is not currently available.*
