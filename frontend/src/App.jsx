@@ -5,6 +5,8 @@ import ResultsPanel from "./components/ResultsPanel"
 import Chips from "./components/Chips"
 import MoreInfoModal from "./components/MoreInfoModal"
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 export default function App() {
   const [query, setQuery] = useState("")
   const [geojson, setGeojson] = useState(null)
@@ -18,7 +20,7 @@ export default function App() {
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/examples")
+    fetch(`${API_BASE}/api/examples`)
       .then((res) => res.json())
       .then((data) => setExamples(data))
   }, [])
@@ -28,7 +30,7 @@ export default function App() {
     setError(null)
 
     try {
-      const res = await fetch("http://localhost:8000/query", {
+      const res = await fetch(`${API_BASE}/api/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: query }),

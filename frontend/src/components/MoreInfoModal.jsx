@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+
 export default function MoreInfoModal({ isOpen, onClose }) {
     const [schemas, setSchemas] = useState({});
     const [selectedDataset, setSelectedDataset] = useState(null);
 
     useEffect(() => {
         if (isOpen) {
-            fetch("http://localhost:8000/schemas")
+            fetch(`${API_BASE}/api/schemas`)
                 .then(res => res.json())
                 .then(data => setSchemas(data));
         }
