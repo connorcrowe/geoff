@@ -3,8 +3,13 @@ import importlib
 from datetime import datetime
 from sqlalchemy import create_engine, text
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
+user = os.getenv("POSTGRES_USER")
+pwd = os.getenv("POSTGRES_PASSWORD")
+host = os.getenv("DB_HOST", "db")
+port = os.getenv("DB_PORT", "5432")
+db = os.getenv("POSTGRES_DB")
+
+engine = create_engine(f"postgresql://{user}:{pwd}@{host}:{port}/{db}")
 
 # Auto-discover all dataset modules
 def get_dataset_modules():
