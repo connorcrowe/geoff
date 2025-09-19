@@ -4,6 +4,8 @@ from pathlib import Path
 
 import psycopg2
 
+DEBUG_MODE = True
+
 # Connect to the database
 DB_CONFIG = {
     "dbname": os.getenv("POSTGRES_DB"),
