@@ -6,7 +6,7 @@ from datetime import datetime
 from core import db, geo, llm, prompt_builder
 
 logging.basicConfig(
-    filename="query_service.log",
+    filename="logs/query_service.log",
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
