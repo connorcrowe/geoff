@@ -24,7 +24,7 @@ export default function ResultsPanel({ rows, columns, resultsSize, setResultsSiz
 
   return (
     <div
-      className={`bg-gray-800 text-white rounded-xl shadow-lg w-2/3 transition-all flex flex-col ${getResultsHeight()}`}
+      className={`bg-gray-800 text-white rounded-xl shadow-lg w-11/12 sm:w-4/5 md:w-2/3 transition-all flex flex-col ${getResultsHeight()}`}
     >
       {/* Header Bar with title/buttons */}
       <div className="flex justify-between items-center bg-gray-900 px-4 py-2 rounded-t-xl border-b border-gray-700 flex-shrink-0">

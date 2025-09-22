@@ -77,7 +77,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen relative">
+    <div className="w-screen h-screen relative overflow-hidden">
 
       {/* More Info Modal */}
       <button
@@ -110,8 +110,8 @@ export default function App() {
           </svg>
           <span className="text-xl font-bold text-white">GEOFF</span>
         </div>
-        <span className="text-sm font-bold italic text-white">The Geospatial Fact Finder</span>
-        <div className="flex items-center space-x-2 text-sm italic">
+        <span className="text-xs font-bold italic text-white">The Geospatial Fact Finder</span>
+        { /*<div className="flex items-center space-x-2 text-sm italic">
           <span>Connor Crowe |</span>
           <a
             href="https://github.com/connorcrowe/geoff"
@@ -121,7 +121,7 @@ export default function App() {
           >
             GitHub
           </a>
-        </div>
+        </div> */}
       </div>
 
       {/* Chips */}
@@ -130,7 +130,7 @@ export default function App() {
       </div>
 
       {/* Prompt Bar */}
-      <div className="absolute bottom-16 w-full flex justify-center z-20">
+      <div className="absolute bottom-16 w-full flex justify-center z-30">
         <PromptBar
           query={query}
           setQuery={setQuery}
@@ -142,7 +142,7 @@ export default function App() {
       </div>
 
       {/* Results Panel*/}
-      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 w-full flex justify-center z-30">
+      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 w-full flex justify-center z-20">
         <ResultsPanel
           rows={rows}
           columns={columns}
