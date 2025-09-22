@@ -41,6 +41,8 @@ services:
       - ./backend/.env
     networks:
       - geoff-prod
+    volumes:
+      - ./logs:/app/logs
     restart: unless-stopped
     
   frontend:
