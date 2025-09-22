@@ -11,7 +11,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
 
-def handle_user_query(user_question: str, retries: int = 2):
+def handle_user_query(user_question: str, client_id: str = None, retries: int = 2):
     start_time = time.time()
     
     # 1: Select relevant tables and examples
@@ -35,7 +35,7 @@ def handle_user_query(user_question: str, retries: int = 2):
 
         # Log prompt and resulting SQL
         request_id = str(uuid.uuid4())
-        logging.info("[%s] User Question: %s", request_id, user_question)
+        logging.info("[%s] ID: %s | User Question: %s", request_id, client_id, user_question)
         logging.info("[%s] Generated SQL: %s", request_id, sql)
 
         # 4: Execute

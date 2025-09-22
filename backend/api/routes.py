@@ -9,14 +9,14 @@ router = APIRouter()
 async def handle_query(req: Request):
     data = await req.json()
     prompt = data.get("prompt", "")
-    print("PROMPT", prompt)
-    return query_service.handle_user_query(prompt)
+    client_id = req.client.host
+    return query_service.handle_user_query(prompt, client_id=client_id)
 
-@router.post("/manual_query")
-async def handle_manual_query(req: Request):
-    data = await req.json()
-    sql = data.get("sql", "")
-    return query_service.handle_manual_query(sql)
+# @router.post("/manual_query")
+# async def handle_manual_query(req: Request):
+#     data = await req.json()
+#     sql = data.get("sql", "")
+#     return query_service.handle_manual_query(sql)
 
 @router.get("/examples")
 async def get_examples():
