@@ -26,7 +26,7 @@ export default function PromptBar({ query, setQuery, onSubmit, examples, loading
   return (
     <div
       ref={containerRef}
-      className="bg-gray-900 text-white px-4 py-2 rounded-2xl flex flex-col w-11/12 sm:w-4/5 md:w-2/3 relative"
+      className="bg-zinc-900 text-white px-4 py-2 rounded-2xl flex flex-col w-11/12 sm:w-4/5 md:w-2/3 relative"
     >
       <div className="flex gap-2">
         <input
@@ -34,7 +34,7 @@ export default function PromptBar({ query, setQuery, onSubmit, examples, loading
           onChange={(e) => setQuery(e.target.value)}
           onFocus={handleFocus}
           className={`bg-transparent outline-none flex-1 ${
-            loading ? "text-gray-500" : "text-white" 
+            loading ? "text-zinc-500" : "text-white" 
           }`}
           placeholder="Ask me about Toronto"
         />
@@ -53,7 +53,7 @@ export default function PromptBar({ query, setQuery, onSubmit, examples, loading
 
       {/* Dropdown of examples */}
       {showExamples && (
-        <div className="absolute bottom-full mb-2 left-0 right-0 bg-gray-800 rounded-xl shadow-lg p-2 max-h-48 overflow-y-auto z-50">
+        <div className="absolute bottom-full mb-2 left-0 right-0 bg-zinc-800 rounded-xl shadow-lg p-2 max-h-48 overflow-y-auto z-50">
           {shuffledExamples.map((ex, i) => (
             <div
               key={i}
@@ -61,7 +61,7 @@ export default function PromptBar({ query, setQuery, onSubmit, examples, loading
                 setQuery(ex.user_query)
                 setShowExamples(false)
               }}
-              className="px-3 py-2 hover:bg-gray-700 cursor-pointer rounded-md"
+              className="px-3 py-2 hover:bg-zinc-700 cursor-pointer rounded-md"
             >
               {ex.user_query}
             </div>

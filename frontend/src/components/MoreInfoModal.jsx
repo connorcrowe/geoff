@@ -18,20 +18,20 @@ export default function MoreInfoModal({ isOpen, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-gray-700 text-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] rounded-lg p-6 overflow-y-auto flex flex-col">
+            <div className="bg-zinc-700 text-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] rounded-lg p-6 overflow-y-auto flex flex-col">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">About Geoff</h2>
-                <button onClick={onClose} className="text-gray-500 hover:text-gray-800">✕</button>
+                <button onClick={onClose} className="text-zinc-500 hover:text-zinc-800">✕</button>
             </div>
 
             {/* Motivation / Description */}
             <p className="mb-4 text-sm">
                 Geoff turns natural language questions into spatial SQL queries and mapped visualisations using an LLM. The goal is to bring faster answers to geospatial questions without requiring technical spatial sql knowledge.<br />
             </p>
-            <div className="mb-4 flex gap-4 text-sm">
-                <a href="https://github.com/connorcrowe/geoff" target="_blank" className="text-blue-400 hover:underline font-bold">GitHub Repo</a>
-                <a href="https://github.com/connorcrowe/geoff/issues/new" target="_blank" className="text-blue-400 hover:underline font-bold">Request Feature/Dataset</a>
+            <div className="mb-4 flex gap-4 text-sm text-emerald-400">
+                <a href="https://github.com/connorcrowe/geoff" target="_blank" className="hover:underline font-bold">GitHub Repo</a>
+                <a href="https://github.com/connorcrowe/geoff/issues/new" target="_blank" className="hover:underline font-bold">Request Feature/Dataset</a>
             </div>
 
             {/* Dataset Table */}
@@ -42,11 +42,11 @@ export default function MoreInfoModal({ isOpen, onClose }) {
 
             <div className="flex flex-col md:flex-row gap-4">
                 {/* Dataset List */}
-                <div className="text-sm md:w-1/3 w-full border-r pr-2 bg-gray-600">
+                <div className="text-sm md:w-1/3 w-full border-r pr-2 bg-zinc-600">
                 {Object.keys(schemas).map(dataset => (
                     <div
                     key={dataset}
-                    className={`p-2 cursor-pointer rounded ${selectedDataset === dataset ? 'bg-blue-500' : ''}`}
+                    className={`p-2 cursor-pointer rounded ${selectedDataset === dataset ? 'bg-emerald-500' : ''}`}
                     onClick={() => setSelectedDataset(dataset)}
                     >
                     {dataset}
@@ -55,7 +55,7 @@ export default function MoreInfoModal({ isOpen, onClose }) {
                 </div>
 
                 {/* Dataset Fields */}
-                <div className="text-sm flex-1 w-full bg-gray-600 p-2">
+                <div className="text-sm flex-1 w-full bg-zinc-600 p-2">
                 {selectedDataset ? (
                     <table className="w-full text-sm">
                     <thead>
@@ -71,7 +71,7 @@ export default function MoreInfoModal({ isOpen, onClose }) {
                             <td className="py-1">
                                 {col.name}
                                 <br />
-                                <span className="text-gray-400 text-xs">{col.type}</span>
+                                <span className="text-zinc-400 text-xs">{col.type}</span>
                             </td>
                             
                             <td className="py-1">{col.description}</td>
@@ -80,7 +80,7 @@ export default function MoreInfoModal({ isOpen, onClose }) {
                     </tbody>
                     </table>
                 ) : (
-                    <p className="text-gray-500">Select a dataset to see its fields</p>
+                    <p className="text-zinc-500">Select a dataset to see its fields</p>
                 )}
                 </div>
             </div>

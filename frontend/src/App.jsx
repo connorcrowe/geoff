@@ -82,7 +82,7 @@ export default function App() {
       {/* More Info Modal */}
       <button
         onClick={() => setModalOpen(true)}
-        className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 z-20"
+        className="absolute top-4 right-4 bg-emerald-900/90 text-white px-4 py-2 rounded hover:bg-blue-700 z-20"
       >
         More Info
       </button>
@@ -98,7 +98,7 @@ export default function App() {
       </div>
 
       {/* Logo / Branding */}
-      <div className="absolute top-3 left-12 z-50 flex flex-col items-start bg-gray-900 p-3 rounded-lg shadow-md space-y-1 text-white">
+      <div className="absolute top-3 left-12 z-50 flex flex-col items-start bg-zinc-800 p-3 rounded-lg shadow-md space-y-1 text-white">
         <div className="flex items-center space-x-2">
           {/* Tiny map pin icon */}
           <svg
@@ -110,22 +110,11 @@ export default function App() {
           </svg>
           <span className="text-xl font-bold text-white">GEOFF</span>
         </div>
-        <span className="text-xs font-bold italic text-white">The Geospatial Fact Finder</span>
-        { /*<div className="flex items-center space-x-2 text-sm italic">
-          <span>Connor Crowe |</span>
-          <a
-            href="https://github.com/connorcrowe/geoff"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-500 hover:underline"
-          >
-            GitHub
-          </a>
-        </div> */}
+        <span className="text-xs font-bold italic text-white text-emerald-400">The Geospatial Fact Finder</span>
       </div>
 
-      {/* Chips */}
-      <div className="absolute bottom-4 w-full flex justify-center z-10">
+      {/* Dataset Buttons */}
+      <div className="absolute bottom-4 w-full flex justify-center z-50">
         <Chips examples={examples} setQuery={setQuery} />
       </div>
 
@@ -142,7 +131,7 @@ export default function App() {
       </div>
 
       {/* Results Panel*/}
-      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 w-full flex justify-center z-20">
+      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 w-full flex justify-center z-20">
         <ResultsPanel
           rows={rows}
           columns={columns}
