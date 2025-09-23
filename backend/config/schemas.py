@@ -50,6 +50,14 @@ schemas = {
     );
     """,
 
+    "parking_lots": """
+    CREATE TABLE parking_lots (
+        id SERIAL PRIMARY KEY,
+        last_updated TEXT,          -- Date of last change to geometry or attribute data
+        geometry GEOMETRY(Polygon, 4326) -- Boundary polygon of the parking lot
+    );
+    """,
+
     "parks": """
     CREATE TABLE parks (
         id SERIAL PRIMARY KEY,

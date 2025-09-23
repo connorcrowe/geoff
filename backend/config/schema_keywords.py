@@ -14,6 +14,9 @@ schema_keywords = {
     "neighbourhoods": [
         "neighbourhoods", "neighbourhood", "community", "district", "area", "ward", "region", "neighborhood"
         ],
+    "parking_lots": [
+        "parking", "parking lot", "lot", "car", "park",
+        ],
     "parks": [
         "park", "parks", "recreation", "rec", "green", "green space", "playground", "dog", "pool", "gym", "field", "community centre"
         ],

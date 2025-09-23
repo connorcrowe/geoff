@@ -135,6 +135,35 @@ examples = [
             ORDER BY area_sq_m DESC LIMIT 10;
         """
     },
+    # --- PARKING LOTS
+    {
+        "tables": ["parking_lots"],
+        "user_query": "Show every parking lot",
+        "sql":"""
+            SELECT geometry, id, last_updated FROM parking_lots;
+        """
+    },
+    {
+        "tables": ["parking_lots"],
+        "user_query": "Which parking lots are the biggest?",
+        "sql":"""
+            SELECT id, geometry, ST_Area(geometry::geography) AS area_m2, last_updated FROM parking_lots ORDER BY area_m2 DESC;
+        """
+    },
+    {
+        "tables": ["parking_lots"],
+        "user_query": "Which parking lot is the biggest?",
+        "sql":"""
+            SELECT id, geometry, ST_Area(geometry::geography) AS area_m2 FROM parking_lots ORDER BY area_m2 DESC LIMIT 1;
+        """
+    },
+    {
+        "tables": ["parking_lots"],
+        "user_query": "What is the total area covered by parking lots?",
+        "sql":"""
+            SELECT ST_Union(geometry) AS all_parking_lots_geom, SUM(ST_Area(geometry::geography)) AS total_area_m2 FROM parking_lots;
+        """
+    },
 
     # --- PARKS
     {
