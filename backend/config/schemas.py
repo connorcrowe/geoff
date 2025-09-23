@@ -13,6 +13,23 @@ schemas = {
         geometry GEOMETRY(Point, 4326) -- geometry location of the station
     );
     """,
+
+    "attractions": """
+    CREATE TABLE attractions (
+        id SERIAL PRIMARY KEY,
+        name TEXT,                  -- name of the attraction or point of interest
+        category TEXT,              -- the category or type that the attraction is
+        phone TEXT,                 -- business phone number if available
+        website TEXT,               -- business website if available
+        address TEXT,               -- street address of attraction
+        municipality TEXT,          -- city borough
+        centreline INT,             -- id for Centreline table
+        ward TEXT,                  -- name of Ward attraction is in
+        ward_id INT,                -- ID of Ward attraction is in
+        description TEXT,           -- description of the attraction or point of interest
+        geometry GEOMETRY(Point, 4326) -- point geometry of attraction or point of interest
+    );
+    """,
     
     "bike_lanes": """
     CREATE TABLE bike_lanes (

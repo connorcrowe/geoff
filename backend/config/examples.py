@@ -28,6 +28,59 @@ examples = [
         """
     },
 
+    # --- ATTRACTIONS
+    {
+        "tables": ["attractions"],
+        "user_query": "Show all attractions, their type, their address, their website, and their descriptions",
+        "sql": """
+            SELECT geometry, name, category, address, description, website
+            FROM attractions;
+        """
+    },
+    {
+        "tables": ["attractions"],
+        "user_query": "Show all museums in the city",
+        "sql": """
+            SELECT geometry, name, address, description FROM attractions
+            WHERE category = 'Museum';
+        """
+    },
+    {
+        "tables": ["attractions"],
+        "user_query": "List all performing arts venues",
+        "sql": """
+            SELECT geometry, name, address, description FROM attractions
+            WHERE category = 'Performing Arts';
+        """
+    },
+    {
+        "tables": ["attractions"],
+        "user_query": "Which ward has the most attractions?",
+        "sql": """
+            SELECT ward, COUNT(*) AS num_attractions
+            FROM attractions
+            GROUP BY ward
+            ORDER BY num_attractions DESC
+            LIMIT 1;
+        """
+    },
+    {
+        "tables": ["attractions"],
+        "user_query": "Show all visitor information points",
+        "sql": """
+            SELECT geometry, name, address, municipality FROM attractions
+            WHERE category = 'Visitor Information';
+        """
+    },
+    {
+        "tables": ["attractions"],
+        "user_query": "Where is the attraction Medieval Times?",
+        "sql": """
+            SELECT geometry, name, address, description FROM attractions
+            WHERE name ILIKE '%Medieval Times%';
+        """
+    },
+
     # --- BIKE_LANES
     {
         "tables": ["bike_lanes"],

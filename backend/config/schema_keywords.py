@@ -5,6 +5,9 @@ schema_keywords = {
     "ambulance_stations": [
         "ambulance", "station", "ems", "emergency", "first response", "first responder"
         ],
+    "attractions": [
+        "attraction", "interest", "point", "tourist", "tourism", "do", "culture", "cultural", "establishment", "shopping", "centre", "art", "museum", "sport", "convention", "trade", "landmark", "garden", "conservatory", "gallery"
+        ],
     "bike_lanes": [
         "bike", "cycle", "bicycle", "lane", "lanes", "bikes", "route", "cycling", "cycle track", "path", "accessible", "active", "transportation"
         ],
