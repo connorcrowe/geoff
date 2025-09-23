@@ -6,13 +6,15 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
   const map = useMap()
   const layerRef = useRef(null)
 
+  const nonHighlightColour = "oklch(50.8% 0.118 165.612)";
+
   // Create layer once per geojson
   useEffect(() => {
     if (!geojson) return
 
     const geoLayer = L.geoJSON(geojson, {
       style: (feature) => ({
-        color: feature.id === selectedFeatureId ? "yellow" : "blue",
+        color: feature.id === selectedFeatureId ? "yellow" : nonHighlightColour,
         weight: feature.id === selectedFeatureId ? 5 : 2,
       }),
       onEachFeature: (feature, layer) => {
@@ -21,7 +23,7 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
       pointToLayer: (feature, latlng) =>
         L.circleMarker(latlng, {
           radius: 6,
-          color: feature.id === selectedFeatureId ? "yellow" : "blue",
+          color: feature.id === selectedFeatureId ? "yellow" : nonHighlightColour,
           weight: 2,
           fillOpacity: 0.7,
         }),
@@ -46,13 +48,13 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
       // Style
       if (layer.setStyle) {
         layer.setStyle({
-          color: isSelected ? "yellow" : "blue",
+          color: isSelected ? "yellow" : nonHighlightColour,
           weight: isSelected ? 5 : 2,
         })
       }
       if (layer.setRadius) {
         layer.setStyle?.({
-          color: isSelected ? "yellow" : "blue",
+          color: isSelected ? "yellow" : nonHighlightColour,
           weight: 2,
         })
         layer.setRadius(isSelected ? 8 : 6)
