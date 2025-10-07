@@ -2,11 +2,9 @@ import { useMap } from "react-leaflet"
 import { useEffect, useRef } from "react"
 import L from "leaflet"
 
-export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClick }) {
+export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClick, colour }) {
   const map = useMap()
   const layerRef = useRef(null)
-
-  const nonHighlightColour = "oklch(50.8% 0.118 165.612)";
 
   // Create layer once per geojson
   useEffect(() => {
@@ -14,7 +12,7 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
 
     const geoLayer = L.geoJSON(geojson, {
       style: (feature) => ({
-        color: feature.id === selectedFeatureId ? "yellow" : nonHighlightColour,
+        color: feature.id === selectedFeatureId ? "yellow" : colour,
         weight: feature.id === selectedFeatureId ? 5 : 2,
       }),
       onEachFeature: (feature, layer) => {
@@ -23,7 +21,7 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
       pointToLayer: (feature, latlng) =>
         L.circleMarker(latlng, {
           radius: 6,
-          color: feature.id === selectedFeatureId ? "yellow" : nonHighlightColour,
+          color: feature.id === selectedFeatureId ? "yellow" : colour,
           weight: 2,
           fillOpacity: 0.7,
         }),
@@ -48,13 +46,13 @@ export default function GeoJsonLayer({ geojson, selectedFeatureId, onFeatureClic
       // Style
       if (layer.setStyle) {
         layer.setStyle({
-          color: isSelected ? "yellow" : nonHighlightColour,
+          color: isSelected ? "yellow" : colour,
           weight: isSelected ? 5 : 2,
         })
       }
       if (layer.setRadius) {
         layer.setStyle?.({
-          color: isSelected ? "yellow" : nonHighlightColour,
+          color: isSelected ? "yellow" : colour,
           weight: 2,
         })
         layer.setRadius(isSelected ? 8 : 6)

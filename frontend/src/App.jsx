@@ -5,74 +5,76 @@ import ResultsPanel from "./components/ResultsPanel"
 import Chips from "./components/Chips"
 import MoreInfoModal from "./components/MoreInfoModal"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 export default function App() {
-  const [query, setQuery] = useState("")
-  const [geojson, setGeojson] = useState(null)
-  const [rows, setRows] = useState([])
-  const [columns, setColumns] = useState([])
-  const [resultsSize, setResultsSize] = useState("normal") // "collapsed" | "normal" | "expanded"
-  const [examples, setExamples] = useState([])
-  const [selectedFeatureId, setSelectedFeatureId] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [query, setQuery] = useState("");
+  const [layers, setLayers] = useState([]);
+  const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  const [selectedFeatureId, setSelectedFeatureId] = useState(null);
+  
+
+  const [resultsSize, setResultsSize] = useState("normal"); // "collapsed" | "normal" | "expanded"
+  const [examples, setExamples] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE}/api/examples`)
       .then((res) => res.json())
       .then((data) => setExamples(data))
-  }, [])
+  }, []);
 
   const handleSubmit = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: query }),
-      })
+      });
 
       if (!res.ok) {
-        throw new Error(`Server responded with ${res.status}`)
+        throw new Error(`Server responded with ${res.status}`);
       }
 
       const data = await res.json()
 
-      if (!data.geojson || !data.columns) {
-        throw new Error("Invalid response from backend")
+      if (!data.layers || !Array.isArray(data.layers)) {
+        throw new Error("Invalid response: no layers found");
       }
 
-      // Ensure features exist
-      const featuresWithId =
-        data.geojson?.features?.map((f, i) => ({
+      const layersWithIds = data.layers.map((layer, layerIdx) => {
+        const featuresWithId = layer.geojson?.features?.map((f, i) => ({
           ...f,
-          id: i, // attach synthetic id
-          properties: { ...f.properties, _id: i }, // store also in properties for reference
-        })) || []
+          id: `${layerIdx}-${i}`, // unique cross-layer id
+          properties: { ...f.properties, _id: `${layerIdx}-${i}` },
+        })) || [];
 
-      const geojsonWithIds = { ...data.geojson, features: featuresWithId }
+        const mappedRows = layer.rows?.map((r, i) => ({
+          id: `${layerIdx}-${i}`,
+          ...Object.fromEntries(layer.columns.map((c, j) => [c, r[j]]))
+        })) || [];
 
-      // Map rows to objects with the same id
-      const mappedRows =
-        data.rows?.map((r, i) =>
-          Array.isArray(r)
-            ? { id: i, ...Object.fromEntries(data.columns.map((col, j) => [col, r[j]])) }
-            : { id: i, ...r }
-        ) || []
+        return {
+          ...layer,
+          geojson: { ...layer.geojson, features: featuresWithId },
+          rows: mappedRows,
+        }
+      })
 
-      setGeojson(geojsonWithIds)
-      setColumns(data.columns || [])
-      setRows(mappedRows)
-      setSelectedFeatureId(null) // reset selection
+      setLayers(layersWithIds);
+      setSelectedLayerIndex(0);
+      setSelectedFeatureId(null);
+    
     } catch (err) {
-      console.error(err)
-      setError("Something went wrong. Try rephrasing your query or try again later.")
+      console.error(err);
+      setError("Something went wrong. Try rephrasing your query or try again later.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -91,7 +93,7 @@ export default function App() {
       {/* Map */}
       <div className="absolute inset-0 z-0">
         <MapView
-          geojson={geojson}
+          layers={layers}
           selectedFeatureId={selectedFeatureId}
           onFeatureClick={setSelectedFeatureId}
         />
@@ -133,8 +135,7 @@ export default function App() {
       {/* Results Panel*/}
       <div className="absolute bottom-28 left-1/2 -translate-x-1/2 w-full flex justify-center z-20">
         <ResultsPanel
-          rows={rows}
-          columns={columns}
+          layers={layers}
           resultsSize={resultsSize}
           setResultsSize={setResultsSize}
           selectedFeatureId={selectedFeatureId}
