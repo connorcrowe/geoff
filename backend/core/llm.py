@@ -39,7 +39,7 @@ def generate_sql(prompt) -> str:
     #         "stream": False
     #     }
     # )
-    #raw_response = res.json()["response"]
+    # raw_response = res.json()["response"]
 
     #print("[DEBUG] URL:", llm_api)
     #print(f"(LLM)[DEBUG] Model: {model}")

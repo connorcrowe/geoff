@@ -28,30 +28,25 @@ def handle_user_query(user_question: str, retries: int = 2):
         
         # 2: Build prompt for LLM
         llm_prompt = prompt_builder.build_full_prompt(user_question, schema_prompt, examples_prompt, previous_sql, previous_error)
-        #print(f"[MAIN] System Prompt: {llm_prompt}")
 
         # 3: Generate SQL
         sql = llm.generate_sql(llm_prompt)
 
-        # Log prompt and resulting SQL
         request_id = str(uuid.uuid4())
         logging.info("[%s] User Question: %s", request_id, user_question)
         logging.info("[%s] Generated SQL: %s", request_id, sql)
 
         # 4: Execute
         try:
-            # TODO: Double try perhaps not needed here
             rows, colnames, er = db.execute_sql(sql)
-            geojson, table_cols, table_rows = geo.convert(rows, colnames)
+            layers = geo.convert_to_geo_layers(rows, colnames)
 
             duration = time.time() - start_time
             logging.info("[%s] Execution Status: SUCCESS | Duration: %.3f sec", request_id, duration)
 
             return {
                 "sql": sql.strip(),
-                "geojson": geojson,
-                "columns": table_cols,
-                "rows": table_rows,
+                "layers": layers,
                 "error": None,
             }
 
