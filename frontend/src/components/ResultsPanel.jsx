@@ -26,7 +26,7 @@ export default function ResultsPanel({ layers, resultsSize, setResultsSize, sele
     switch (resultsSize) {
       case "collapsed": return "h-24"
       case "expanded": return "h-96"
-      default: return "h-48"
+      default: return "h-64"
     }
   }
 
@@ -37,7 +37,7 @@ export default function ResultsPanel({ layers, resultsSize, setResultsSize, sele
       {/* Header */}
       <div className="flex justify-between items-center bg-zinc-900 px-4 py-2 rounded-t-xl border-b border-zinc-700 flex-shrink-0">
         <h2 className="font-bold text-xs md:text-sm">
-          {layers.reduce((sum, l) => sum + l.rows.length, 0)} Results across {layers.length} layers
+          {layers.reduce((sum, l) => sum + l.rows.length, 0)} Results in {layers.length} layers
         </h2>
         <div className="space-x-2">
           <button onClick={() => setResultsSize("collapsed")} className="bg-zinc-600 px-2 py-1 rounded text-xs">Collapse</button>
@@ -58,7 +58,7 @@ export default function ResultsPanel({ layers, resultsSize, setResultsSize, sele
               <span className="font-semibold text-xs md:text-sm">
                 {layer.name} ({layer.rows.length})
               </span>
-              <span className="text-xs">{expandedLayers[layer.name] ? "▼" : "▶"}</span>
+              <span className="text-xs">{expandedLayers[layer.name] ? "▽" : "▷"}</span>
             </div>
 
             {/* Table */}
