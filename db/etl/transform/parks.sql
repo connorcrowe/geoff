@@ -9,10 +9,16 @@ SELECT
     NULLIF(amenities, '')::text AS amenities,
     --NULLIF(address, '')::text AS address,
     --NULLIF(phone, '')::text AS phone,
-    NULLIF(url, '')::text AS url,
+    --NULLIF(url, '')::text AS url,
     ST_SetSRID(ST_GeomFromGeoJSON(geometry), 4326) AS geometry
 FROM staging.parks_raw;
 
 ALTER TABLE data.parks ADD PRIMARY KEY (id);
-
 CREATE INDEX ON data.parks USING GIST (geometry);
+
+-- Add descriptions
+COMMENT ON COLUMN data.parks.id IS 'Unique identifier';
+COMMENT ON COLUMN data.parks.name IS 'Official park name';
+COMMENT ON COLUMN data.parks.type IS 'Category of park ';
+COMMENT ON COLUMN data.parks.amenities IS 'List of amenities in the park';
+COMMENT ON COLUMN data.parks.geometry IS 'Geometry: point location of the park';

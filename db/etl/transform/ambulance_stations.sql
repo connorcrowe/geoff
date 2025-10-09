@@ -12,5 +12,14 @@ SELECT
 FROM staging.ambulance_stations_raw;
 
 ALTER TABLE data.ambulance_stations ADD PRIMARY KEY (id);
-
 CREATE INDEX ON data.ambulance_stations USING GIST (geometry);
+
+-- Add descriptions
+COMMENT ON COLUMN data.ambulance_stations.id IS 'Unique identifier';
+COMMENT ON COLUMN data.ambulance_stations.address IS 'Street address of the station';
+COMMENT ON COLUMN data.ambulance_stations.municipality IS 'Municipality of the station';
+COMMENT ON COLUMN data.ambulance_stations.name IS 'Name of the station';
+COMMENT ON COLUMN data.ambulance_stations.ems_id IS 'EMS ID';
+COMMENT ON COLUMN data.ambulance_stations.ems_name IS 'EMS short name of the station';
+COMMENT ON COLUMN data.ambulance_stations.ems_website IS 'Website of ambulance station';
+COMMENT ON COLUMN data.ambulance_stations.geometry IS 'Geometry: point location of the station';
