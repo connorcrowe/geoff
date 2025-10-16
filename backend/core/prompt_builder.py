@@ -1,59 +1,38 @@
-from config.examples import examples
-from config.schemas import schemas
-from config.schema_keywords import schema_keywords
-from config.prompts import SYSTEM_PROMPT, CORRECTIVE_PROMPT
+from config.examples import examples, examples_json
 
-def select_tables(user_question: str, min_results: int=1):
-    """
-    Search user query for keywords associated with specific database tables.
-    Returns a list of matching table names.
-    Falls back to all schemas if none found.
-    """
-    query_lower = user_question.lower()
-    matched_tables = [
-        table for table, keywords in schema_keywords.items()
-        if any(keyword in query_lower for keyword in keywords)
-    ]
-
-    if len(matched_tables) < min_results:
-        matched_tables = list(schemas.keys())
-
-    return matched_tables
-
-# def select_examples_from_tables(tables, user_query, n=4):
-#     """Return up to n relevant examples for the given tables."""
-#     # TODO: Add sequence matching and rank examples to select best ones
-#     return None
-
-def build_schema_prompt(table_list):
+def build_schema_prompt(relevant_tables):
     """Return only relevant schemas as a string for LLM system prompt."""
-    return "\n".join(schemas[table] for table in table_list if table in schemas)
+    schema_parts = []
+    for table in relevant_tables:
+        columns_text = "\n".join(
+            f"  - {c['column_name']} ({c['col_type']}): {c['description']}"
+            for c in table["columns"]
+        )
+        schema_parts.append(f"Table: {table['table_name']}\n{columns_text}")
+    schema_text = "\n\n".join(schema_parts)
+    return schema_text
 
 def build_examples_prompt(tables, n=10):
     """Format example list into Q/A style for LLM system prompt."""
-    formatted = []
+    examples_text = "\n\n".join(
+        f"Q: {ex['user_query']}\nA: {ex['plan']}" for ex in examples_json
+    )
+    return examples_text
 
-    example_list = [ex for ex in examples if set(ex['tables']).issubset(set(tables))][:n]
+def build_full_prompt(user_question: str, schema_text, examples_text, previous_sql: str=None, previous_error: str=None):
+    prompt_text = f"""
+*User Question*:
+    {user_question}
 
-    for ex in example_list:
-        formatted.append(f"Q: {ex['user_query']}\nA: {ex['sql'].strip()}")
-    return "\n".join(formatted)
+*Database Schema*:
+{schema_text}
 
-def build_full_prompt(user_question: str, schema_prompt, examples_prompt, previous_sql: str=None, previous_error: str=None):
+*Example Plans*:
+{examples_text}
 
-    if previous_sql and previous_error:
-        # Corrective prompt
-        prompt_text = CORRECTIVE_PROMPT.render(
-            schema_prompt=schema_prompt,
-            previous_sql=previous_sql,
-            error_message=previous_error,
-            user_question=user_question
-        )
-    else:
-        # Normal (first) query
-        prompt_text = SYSTEM_PROMPT.render(
-            schema_prompt=schema_prompt,
-            few_shot_examples=examples_prompt,
-            user_question=user_question
-        )
+*Instructions*:
+    Using the schema above and examples, generate a JSON plan that answers the user question.
+    Include tables, columns, filters, joins, and output fields.
+    Only include relevant tables and columns.
+    """
     return prompt_text
