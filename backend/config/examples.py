@@ -1,15 +1,6 @@
 # config/examples.py
 """Contains example PostGIS syntax for common queries for each table"""
 
-# Format
-    # {
-    #     "tables": [""],
-    #     "user_query": "",
-    #     "sql":"""
-    #         SELECT ;
-    #     """
-    # },
-
 examples = [
     # --- AMBULANCE_STATIONS
     {
@@ -306,5 +297,92 @@ examples = [
     #         SELECT geometry, name, type FROM streets;
     #     """
     # },
+]
 
+examples_json = [
+    {
+        "user_query": "Show all schools",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {"table": "schools", "columns": ["name", "school_type_desc"], "filters": []}
+            ]
+        }
+    },
+    {
+        "user_query": "List all parks with their types",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {"table": "parks", "columns": ["name", "type"], "filters": []}
+            ]
+        }
+    },
+    {
+        "user_query": "Find all police stations",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {"table": "police_stations", "columns": ["name", "address"], "filters": []}
+            ]
+        }
+    },
+    {
+        "user_query": "Get all fire stations built before 1980",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {
+                    "table": "fire_stations",
+                    "columns": ["station_no", "address", "year_built"],
+                    "filters": [{"column": "year_built", "operator": "<", "value": 1980}]
+                }
+            ]
+        }
+    },
+    {
+        "user_query": "Show all bike lanes installed after 2015",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {
+                    "table": "bike_lanes",
+                    "columns": ["street_name", "installed_year", "lane_type"],
+                    "filters": [{"column": "installed_year", "operator": ">", "value": 2015}]
+                }
+            ]
+        }
+    },
+    {
+        "user_query": "Show schools and parks together",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {"table": "schools", "columns": ["name", "school_type_desc", "geometry"], "filters": []},
+                {"table": "parks", "columns": ["name", "type", "geometry"], "filters": []}
+            ]
+        }
+    },
+    {
+        "user_query": "Show all neighbourhoods with classification 'Emerging'",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {
+                    "table": "neighbourhoods",
+                    "columns": ["area_name", "classification"],
+                    "filters": [{"column": "classification", "operator": "ILIKE", "value": "%Emerging%"}]
+                }
+            ]
+        }
+    },
+    {
+        "user_query": "List all parking lots",
+        "plan": {
+            "action": "select",
+            "source_tables": [
+                {"table": "parking_lots", "columns": ["id", "last_updated"], "filters": []}
+            ]
+        }
+    }
 ]
