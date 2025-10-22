@@ -1,6 +1,6 @@
 import requests
 import re
-
+import json
 import os
 
 #OLLAMA_API_URL = os.getenv("LLM_API_URL")
@@ -74,4 +74,9 @@ def generate_json_plan(prompt):
     res = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
     res.raise_for_status()
     raw_response = res.json()["choices"][0]["message"]["content"]
-    return raw_response
+
+    # Convert str to dict
+    response_cleaned = raw_response.lstrip("`").lstrip("json").rstrip("`").strip()
+    plan_dict = json.loads(response_cleaned)
+
+    return plan_dict
