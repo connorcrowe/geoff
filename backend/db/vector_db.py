@@ -39,10 +39,10 @@ def query_table_embeddings(embedding, limit: int=999):
     LIMIT {limit};
     """
 
-    rows, cols, er = execute_sql(sql)
+    rows = execute_sql(sql)
 
     # Convert rows to list of dicts
-    results = [dict(zip(cols, row)) for row in rows]
+    #results = [dict(zip(cols, row)) for row in rows]
 
     return [
         {
@@ -52,6 +52,6 @@ def query_table_embeddings(embedding, limit: int=999):
             "description": r["description"],
             "score": r["distance"]
         }
-        for r in results
+        for r in rows
     ]
 
