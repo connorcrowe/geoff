@@ -6,7 +6,7 @@ from datetime import datetime
 from utils.embed import embed_text
 from db.vector_db import select_relevant_tables
 from core.parse_results import parse_results
-from core.query_builder import build_query
+from core.query_builder2 import build_query
 
 from core import llm, prompt_builder
 
@@ -46,7 +46,7 @@ def handle_user_query(user_question: str, retries: int = 2):
 
     # 8: Turn JSON Plan to SQL
     sql_queries = build_query(plan_raw)
-    #print("RESULT: ", sql_queries)
+    print("RESULT: ", sql_queries)
 
     # 9: Execute SQL statements
     layers = parse_results(sql_queries)
