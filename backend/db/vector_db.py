@@ -41,9 +41,6 @@ def query_table_embeddings(embedding, limit: int=999):
 
     rows = execute_sql(sql)
 
-    # Convert rows to list of dicts
-    #results = [dict(zip(cols, row)) for row in rows]
-
     return [
         {
             "table_name": r["table_name"],
