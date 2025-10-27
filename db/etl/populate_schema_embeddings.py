@@ -2,6 +2,8 @@ import os
 import psycopg2
 from openai import OpenAI 
 
+from utils.embed import embed
+
 # --- Config ---
 EMBED_DIM = 1536
 
@@ -17,15 +19,6 @@ cur = conn.cursor()
 
 # Intialize embedding client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Generate Embedding
-def embed(text: str):
-    """ Returns an embedding vector for a string. """
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    )
-    return response.data[0].embedding
 
 # Query
 cur.execute(
@@ -47,7 +40,7 @@ for schema, table, column, col_type, desc in columns:
     if col_type == "USER-DEFINED": col_type = "geometry"
     description = desc 
     text_to_embed = f"{table}.{column}: {description} (type: {col_type})"
-    vector = embed(text_to_embed)
+    vector = embed(text_to_embed, client)
 
     cur.execute("""
         INSERT INTO meta.schema_embeddings (table_name, column_name, col_type, description, embedding)
