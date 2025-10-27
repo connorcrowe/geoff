@@ -6,7 +6,7 @@ from datetime import datetime
 from utils.embed import embed_text
 from db.vector_db import select_relevant_tables
 from core.parse_results import parse_results
-from core.query_builder2 import build_query
+from core.query_builder import build_query
 
 from core import llm, prompt_builder
 

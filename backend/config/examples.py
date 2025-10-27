@@ -2,6 +2,13 @@
 """Contains example PostGIS syntax for common queries for each table"""
 
 examples = [
+    # --- WARDS
+    {
+        "tables": ["wards"],
+        "user_query": "Show all wards",
+        "sql": """SELECT geometry, name, ward_id FROM wards;
+        """
+    },
     # --- AMBULANCE_STATIONS
     {
         "tables": ["ambulance_stations"],
@@ -300,89 +307,510 @@ examples = [
 ]
 
 examples_json = [
+
+    #✓ --- select/1.0                --- Single table 
     {
         "user_query": "Show all schools",
         "plan": {
             "action": "select",
-            "source_tables": [
-                {"table": "schools", "columns": ["name", "school_type_desc"], "filters": []}
+            "groups": [
+                {"source_tables": [
+                    {"table": "schools", "columns": ["name", "school_type_desc"], "filters": []}
+                ]}
             ]
         }
     },
-    {
-        "user_query": "List all parks with their types",
-        "plan": {
-            "action": "select",
-            "source_tables": [
-                {"table": "parks", "columns": ["name", "type"], "filters": []}
-            ]
-        }
-    },
-    {
-        "user_query": "Find all police stations",
-        "plan": {
-            "action": "select",
-            "source_tables": [
-                {"table": "police_stations", "columns": ["name", "address"], "filters": []}
-            ]
-        }
-    },
-    {
-        "user_query": "Get all fire stations built before 1980",
-        "plan": {
-            "action": "select",
-            "source_tables": [
-                {
-                    "table": "fire_stations",
-                    "columns": ["station_no", "address", "year_built"],
-                    "filters": [{"column": "year_built", "operator": "<", "value": 1980}]
-                }
-            ]
-        }
-    },
-    {
-        "user_query": "Show all bike lanes installed after 2015",
-        "plan": {
-            "action": "select",
-            "source_tables": [
-                {
-                    "table": "bike_lanes",
-                    "columns": ["street_name", "installed_year", "lane_type"],
-                    "filters": [{"column": "installed_year", "operator": ">", "value": 2015}]
-                }
-            ]
-        }
-    },
-    {
-        "user_query": "Show schools and parks together",
-        "plan": {
-            "action": "select",
-            "source_tables": [
-                {"table": "schools", "columns": ["name", "school_type_desc", "geometry"], "filters": []},
-                {"table": "parks", "columns": ["name", "type", "geometry"], "filters": []}
-            ]
-        }
-    },
+        #✓ --- select/1.0                --- Single table, filter (str)
     {
         "user_query": "Show all neighbourhoods with classification 'Emerging'",
         "plan": {
             "action": "select",
-            "source_tables": [
+            "groups": [
+                {"source_tables": [
+                    {
+                        "table": "neighbourhoods",
+                        "columns": ["area_name", "classification", "geometry"],
+                        "filters": [{"column": "classification_code", "operator": "ILIKE", "value": "%EN%"}]
+                    }
+                ]}
+            ]
+        }
+    },
+        #✓ --- select/1.0                --- Single table, filter (num)
+    {
+        "user_query": "Get all fire stations built before 1980",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {"source_tables": [
+                    {
+                        "table": "fire_stations",
+                        "columns": ["station_no", "address", "year_built", "geometry"],
+                        "filters": [{"column": "year_built", "operator": "<", "value": 1980}]
+                    }
+                ]}
+            ]
+            
+        }
+    },
+
+    #✓ --- select/2.0                --- Multi table, unrelated, separate
+    {
+        "user_query": "Show schools and parks together",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {"source_tables": [
+                    {
+                        "table": "schools",
+                        "columns": ["name", "school_type_desc", "geometry"],
+                        "filters": []
+                    }
+                ]},
+                {"source_tables": [
+                    {
+                        "table": "parks",
+                        "columns": ["name", "type", "geometry"],
+                        "filters": []
+                    }
+                ]}
+            ]
+        }
+    },
+
+    #✓ --- select/2.1.1-distance     --- Spatial filter, exists, dwithin
+    {
+        "user_query": "Show all bike lanes within 500 meters of schools",
+        "plan": {
+            "action": "select",
+            "groups": [
                 {
-                    "table": "neighbourhoods",
-                    "columns": ["area_name", "classification"],
-                    "filters": [{"column": "classification", "operator": "ILIKE", "value": "%Emerging%"}]
+                    "source_tables": [
+                        {
+                            "table": "bike_lanes",
+                            "columns": ["street_name", "lane_type", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "schools",
+                            "columns": ["name", "school_type_desc", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_dwithin",
+                            "clause": "exists",
+                            "left_table": "bike_lanes",
+                            "right_table": "schools",
+                            "params": {"distance_meters": 500},
+                        }
+                    ]
                 }
             ]
         }
     },
     {
-        "user_query": "List all parking lots",
+        "user_query": "Show all bike lanes within 500 meters of private schools",
         "plan": {
             "action": "select",
-            "source_tables": [
-                {"table": "parking_lots", "columns": ["id", "last_updated"], "filters": []}
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "bike_lanes",
+                            "columns": ["street_name", "lane_type", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "schools",
+                            "columns": ["name", "school_type_desc", "geometry"],
+                            "filters": [{"column": "school_type_desc", "operator": "ILIKE", "value": "%private%"}]
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_dwithin",
+                            "clause": "exists",
+                            "left_table": "bike_lanes",
+                            "right_table": "schools",
+                            "params": {"distance_meters": 500},
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #✓ --- select/2.1.1-intersects   --- Spatial filter, exists, intersects
+    {
+        "user_query": "Show all neighbourhoods that intersect ward boundaries",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "neighbourhoods",
+                            "columns": ["area_name", "classification", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "wards",
+                            "columns": ["name", "ward_id", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_intersects",
+                            "clause": "exists",
+                            "left_table": "neighbourhoods",
+                            "right_table": "wards"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #✓ --- select/2.1.2-distance     --- Spatial join, join, dwithin
+    {
+        "user_query": "List each school and the nearest fire station within 1 kilometer",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "schools",
+                            "columns": ["name", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "fire_stations",
+                            "columns": ["station_no", "address", "municipality", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_dwithin",
+                            "clause": "join",
+                            "left_table": "schools",
+                            "right_table": "fire_stations",
+                            "params": {"distance_meters": 1000}
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #✓ --- select/2.1.2-intersects   --- Spatial join, join, intersects
+    {
+        "user_query": "List all parks and the neighbourhoods they fall within",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "parks",
+                            "columns": ["name", "type", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "neighbourhoods",
+                            "columns": ["area_name", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_intersects",
+                            "clause": "join",
+                            "left_table": "parks",
+                            "right_table": "neighbourhoods"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #X(I) --- select/2.1.3-dwithin      --- Spatial join, left join, dwithin
+    {
+        "user_query": "Show all ambulance stations and any attractions within 250 meters, if available",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "ambulance_stations",
+                            "columns": ["name", "municipality", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "attractions",
+                            "columns": ["name", "category", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_dwithin",
+                            "clause": "left join",
+                            "left_table": "ambulance_stations",
+                            "right_table": "attractions",
+                            "params": {"distance_meters": 250}
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #X(I) --- select/2.1.3-intersects   --- Spatial join, left join, intersects
+    {
+        "user_query": "Show all bike lanes and the ward they pass through, even if some aren't inside any ward",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "bike_lanes",
+                            "columns": ["street_name", "lane_type", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "wards",
+                            "columns": ["name", "ward_id", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "spatial",
+                            "method": "st_intersects",
+                            "clause": "left join",
+                            "left_table": "bike_lanes",
+                            "right_table": "wards"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #✓ --- select/2.2.1              --- Attribute filter, exists
+    {
+        "user_query": "Show the ward that the Allan Gardens are in",
+        "plan": {
+            "action": "select",
+            "groups": [
+            {
+                "source_tables": [
+                    {"table": "wards", "columns": ["name", "ward_id", "geometry"], "filters": []},
+                    {"table": "attractions", "columns": ["name", "category", "address", "ward_id", "geometry"], "filters": [{"column": "name", "operator": "ILIKE", "value": "Allan Gardens"}]}
+                ],
+                "relations": [
+                {
+                    "type": "attribute",
+                    "method": "=",
+                    "clause": "exists",
+                    "left_table": "wards",
+                    "right_table": "attractions",
+                    "params":{"left_column": "ward_id", "right_column": "ward_id"}
+                }
+                ]
+            }
+            ]
+        }
+    },
+
+    #✓ --- select/2.2.2              --- Attribute join, join      (Note: this one points out a frontend ambiguous column name issue)
+    {
+        "user_query": "Join attractions with wards by matching ward_id",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "attractions",
+                            "columns": ["name", "ward_id", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "wards",
+                            "columns": ["ward_id", "name", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "attribute",
+                            "method": "=",
+                            "clause": "join",
+                            "left_table": "attractions",
+                            "right_table": "wards",
+                            "params": {"left_column": "ward_id", "right_column": "ward_id"}
+                            
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    #X(I) --- select/2.2.3              --- Atribute join, left join
+    {
+        "user_query": "List all wards and any attractions that belong to them, even if some wards have none",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "wards",
+                            "columns": ["name", "ward_id", "geometry"],
+                            "filters": []
+                        },
+                        {
+                            "table": "attractions",
+                            "columns": ["name", "ward_id", "geometry"],
+                            "filters": []
+                        }
+                    ],
+                    "relations": [
+                        {
+                            "type": "attribute",
+                            "method": "=",
+                            "clause": "left join",
+                            "left_table": "wards",
+                            "left_column": "ward_id",
+                            "right_table": "attractions",
+                            "right_column": "ward_id"
+                        }
+                    ]
+                }
             ]
         }
     }
+
+
+    # NOT IMPLEMENTED - 2.2 (Layers: 2) Multi layer, filtered (spatial, exists, st_contains)
+    # {
+    #     "user_query": "Show neighbourhoods that contain at least one fire station",
+    #     "plan": {
+    #         "action": "select",
+    #         "groups": [
+    #         {
+    #             "source_tables": [
+    #                 {"table": "neighbourhoods", "columns": ["area_name", "geometry"], "filters": []},
+    #                 {"table": "fire_stations", "columns": ["id", "geometry"], "filters": []}
+    #             ],
+    #             "relations": [
+    #             {
+    #                 "type": "spatial",
+    #                 "method": "st_contains",
+    #                 "clause": "exists",
+    #                 "left_table": "neighbourhoods",
+    #                 "right_table": "fire_stations",
+    #                 "params": {}
+    #             }
+    #             ]
+    #         }
+    #         ]
+    #     }
+    # },
+
+    # BROKEN (AMBIGUOUS) - 2.3 (Layers: 2) Multi layer, joined (spatial, join, st_dwithin)
+    # {
+    #     "user_query": "List all schools and nearby fire stations within 300 meters",
+    #     "plan": {
+    #         "action": "select",
+    #         "groups": [
+    #         {
+    #             "source_tables": [
+    #                 {"table": "schools", "columns": ["name", "school_type_desc", "geometry"], "filters": []},
+    #                 {"table": "fire_stations", "columns": ["address", "municipality"], "filters": []}
+    #             ],
+    #             "relations": [
+    #             {
+    #                 "type": "spatial",
+    #                 "method": "st_dwithin",
+    #                 "clause": "join",
+    #                 "left_table": "schools",
+    #                 "right_table": "fire_stations",
+    #                 "params": {"distance_meters": 300}
+    #             }
+    #             ]
+    #         }
+    #         ]
+    #     }
+    # },
+
+    # # BROKEN (AMBIGUOUS) - 2.3 (Layers: 2) Multi layer, joined (spatial, join, st_contains)
+    # {
+    #     "user_query": "Find which neighbourhood each park is located in",
+    #     "plan": {
+    #         "action": "select",
+    #         "groups": [
+    #         {
+    #             "source_tables": [
+    #                 {"table": "parks", "columns": ["name", "type", "geometry"], "filters": []},
+    #                 {"table": "neighbourhoods", "columns": ["area_name", "geometry"], "filters": []}
+    #             ],
+    #             "relations": [
+    #             {
+    #                 "type": "spatial",
+    #                 "method": "st_contains",
+    #                 "clause": "join",
+    #                 "left_table": "neighbourhoods",
+    #                 "right_table": "parks",
+    #                 "params": {}
+    #             }
+    #             ]
+    #         }
+    #         ]
+    #     }
+    # },
+
+    # 2.4 Multi layer, joined (attribute, join)
+    # {
+    #     "user_query": "Show the attractions in each ward",
+    #     "plan": {
+    #         "action": "select",
+    #         "groups": [
+    #         {
+    #             "source_tables": [
+    #                 {"table": "wards", "columns": ["name", "ward_id", "geometry"], "filters": []},
+    #                 {"table": "attractions", "columns": ["name", "category", "address", "ward_id", "geometry"], "filters": []}
+    #             ],
+    #             "relations": [
+    #             {
+    #                 "type": "attribute",
+                    
+    #                 "clause": "join",
+    #                 "left_table": "wards",
+    #                 "right_table": "attractions",
+    #                 "on":{"left_column": "ward_id", "right_column": "ward_id"}
+    #             }
+    #             ]
+    #         }
+    #         ]
+    #     }
+    # },
+
+
 ]
