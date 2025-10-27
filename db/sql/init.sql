@@ -27,8 +27,9 @@ ADD CONSTRAINT unique_table_column UNIQUE(table_name, column_name);
 -- Example Queries
 CREATE TABLE IF NOT EXISTS meta.example_embeddings (
     id SERIAL PRIMARY KEY,
-    tables TEXT[],
+    type TEXT NOT NULL,
+    sources TEXT[] NOT NULL,
     user_query TEXT NOT NULL,
-    plan JSONB,
+    plan JSONB NOT NULL,
     embedding VECTOR(1536)
 );
