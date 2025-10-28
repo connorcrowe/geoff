@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function Chips({ examples, setQuery }) {
+export default function Chips({ schemas, setQuery }) {
   const [open, setOpen] = useState(false);
   const [showChips, setShowChips] = useState(true);
   const drawerRef = useRef();
@@ -29,17 +29,11 @@ export default function Chips({ examples, setQuery }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  if (!examples || examples.length === 0) return null;
+  if (!schemas) return null;
 
-  // build first-example lookup and labels
-  const lookup = {};
-  examples.forEach((ex) => {
-    ex.tables.forEach((t) => {
-      if (!lookup[t]) lookup[t] = ex.user_query;
-    });
-  });
+  const tableNames = Object.keys(schemas);
 
-  const chipLabels = Object.keys(lookup).map((t) => ({
+  const chipLabels = tableNames.map((t) => ({
     table: t,
     label: t.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
   }));
@@ -59,7 +53,7 @@ export default function Chips({ examples, setQuery }) {
           chipLabels.map(({ label, table }) => (
             <button
               key={table}
-              onClick={() => setQuery(lookup[table])}
+              onClick={() => setQuery(`Show all ${label}`)}
               className="bg-zinc-700 text-white px-3 py-1 rounded-xl text-s, hover:bg-zinc-600 flex-shrink-0"
             >
               {label}
@@ -89,7 +83,7 @@ export default function Chips({ examples, setQuery }) {
                 <button
                   key={table}
                   onClick={() => {
-                    setQuery(lookup[table]);
+                    setQuery(`Show all ${label}`);
                     setOpen(false);
                   }}
                   className="bg-zinc-700 hover:bg-zinc-600 px-3 py-2 rounded-lg text-sm text-left"
