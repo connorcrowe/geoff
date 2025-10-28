@@ -3,12 +3,11 @@ import re
 
 from db.db import execute_sql
 
-
 def parse_results(queries):
     layers = []
 
     for query in queries:
-        print("AAA. Executing: ", query)
+        print("[Parse] Executing: ", query)
         rows = execute_sql(query)
 
         colnames = list(rows[0].keys())

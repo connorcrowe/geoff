@@ -2,6 +2,40 @@ from collections import defaultdict
 
 from db.db import execute_sql
 
+def select_relevant_examples(embedding, score_threshold: float=-0.3):
+    matches = query_example_embeddings(embedding)
+
+    filtered = [m for m in matches if m["score"] <=score_threshold]
+    print(f"[VectorDB] Examples past threshold ({score_threshold}): {len(filtered)}")
+    # Sort by relevance
+    relevant_examples = sorted(filtered, key=lambda m: m["score"])
+
+    return relevant_examples
+
+def query_example_embeddings(embedding, limit: int=999):
+    
+    sql = f"""
+        SELECT id, type, sources, user_query, plan, 
+            embedding <#> '{embedding}' AS score
+        FROM meta.example_embeddings
+        ORDER BY score
+        LIMIT {limit};
+    """
+
+    rows = execute_sql(sql)
+
+    return [
+        {
+            "id": r["id"],
+            "type": r["type"],
+            "sources": r["sources"],
+            "user_query": r["user_query"],
+            "plan": r["plan"],
+            "score": r["score"]
+        }
+        for r in rows
+    ]
+        
 def select_relevant_tables(embedding, score_threshold: float=-0.3):
     matches = query_table_embeddings(embedding, limit=100)
 
