@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from utils.embed import embed_text
-from db.vector_db import select_relevant_tables
+from db.vector_db import select_relevant_tables, select_relevant_examples
 from core.parse_results import parse_results
 from core.query_builder import build_query
 
@@ -32,7 +32,8 @@ def handle_user_query(user_question: str, retries: int = 2):
     schema_text = prompt_builder.build_schema_prompt(relevant_tables)
 
     # 4: Fetch most similar examples and put in text form for prompting
-    examples_text = prompt_builder.build_examples_prompt(relevant_tables)
+    relevant_examples = select_relevant_examples(question_embedding)
+    examples_text = prompt_builder.build_examples_prompt(relevant_examples)
 
     # 5: Build full prompt
     prompt = prompt_builder.build_full_prompt(user_question, schema_text, examples_text)
@@ -46,7 +47,7 @@ def handle_user_query(user_question: str, retries: int = 2):
 
     # 8: Turn JSON Plan to SQL
     sql_queries = build_query(plan_raw)
-    print("RESULT: ", sql_queries)
+    print("[MAIN] Result: ", sql_queries)
 
     # 9: Execute SQL statements
     layers = parse_results(sql_queries)
