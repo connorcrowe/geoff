@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from services import query_service
-from config.examples import examples
-from config.schemas import get_parsed_schemas
+
+from db.db import execute_sql
 
 router = APIRouter()
 
@@ -18,9 +18,24 @@ async def handle_query(req: Request):
 #     return query_service.handle_manual_query(sql)
 
 @router.get("/examples")
-async def get_examples():
-    return examples
+async def get_examples(limit: int=999):
+    sql = f"SELECT user_query FROM meta.example_embeddings LIMIT {limit};"
+    rows = execute_sql(sql)
+    return rows
 
 @router.get("/schemas")
 async def get_schemas():
-    return get_parsed_schemas()
+    sql = f"SELECT table_name, column_name, col_type, description FROM meta.schema_embeddings ORDER BY table_name, column_name;"
+    rows = execute_sql(sql)
+    
+    schemas = {}
+    for row in rows: 
+        table = row["table_name"]
+        column = {
+            "column_name": row["column_name"],
+            "column_type": row["col_type"],
+            "description": row["description"]
+        }
+        schemas.setdefault(table, []).append(column)
+
+    return schemas
