@@ -1,5 +1,3 @@
-from config.examples import examples, examples_json
-
 def build_schema_prompt(relevant_tables):
     """Return only relevant schemas as a string for LLM system prompt."""
     schema_parts = []
