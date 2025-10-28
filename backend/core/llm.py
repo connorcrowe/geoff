@@ -77,6 +77,7 @@ def generate_json_plan(prompt):
 
     # Convert str to dict
     response_cleaned = raw_response.lstrip("`").lstrip("json").rstrip("`").strip()
-    plan_dict = json.loads(response_cleaned)
+    #print(f"[LLM] Response: {response_cleaned}")
+    plan_dict = json.loads(response_cleaned.replace("'", '"'))
 
     return plan_dict
