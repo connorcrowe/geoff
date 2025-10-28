@@ -15,9 +15,9 @@ CREATE INDEX ON data.schools USING GIST (geometry);
 
 -- Add descriptions
 COMMENT ON COLUMN data.schools.id IS 'Unique identifier';
-COMMENT ON COLUMN data.schools.id IS 'Name of the school';
-COMMENT ON COLUMN data.schools.id IS 'Short code for type (FP - French Public, FS - French Separate, EP - English Public, ES - English Separate, PR - Private)';
-COMMENT ON COLUMN data.schools.id IS 'Long form of type';
-COMMENT ON COLUMN data.schools.id IS 'School board name';
-COMMENT ON COLUMN data.schools.id IS 'Street address';
+COMMENT ON COLUMN data.schools.name IS 'Name of the school';
+COMMENT ON COLUMN data.schools.school_type IS 'Short code for type (FP - French Public, FS - French Separate, EP - English Public, ES - English Separate, PR - Private)';
+COMMENT ON COLUMN data.schools.school_type_desc IS 'Long form of type';
+COMMENT ON COLUMN data.schools.school_board_name IS 'School board name';
+COMMENT ON COLUMN data.schools.address IS 'Street address';
 COMMENT ON COLUMN data.schools.geometry IS 'Geometry: point location of the school';
