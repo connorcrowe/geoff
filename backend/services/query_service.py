@@ -42,6 +42,9 @@ def handle_user_query(user_question: str, retries: int = 2):
     plan_raw = llm.generate_json_plan(prompt)
     print(f"[MAIN] Plan: {type(plan_raw)}, {plan_raw}")
     
+    duration = time.time() - start_time
+    logging.info("[%s] Plan Generated | Duration: %.3f sec", request_id, duration)
+    
     # 7: Validate plan
     # plan = validate_json.plan.validate(plan_raw)
 
@@ -51,6 +54,11 @@ def handle_user_query(user_question: str, retries: int = 2):
 
     # 9: Execute SQL statements
     layers = parse_results(sql_queries)
+    logging.info("[%s] Generated SQL: %s", request_id, sql_queries)
+
+
+    duration = time.time() - start_time
+    logging.info("[%s] Execution Status: SUCCESS | Duration: %.3f sec", request_id, duration)
 
     return {
             "sql": "",
@@ -58,7 +66,6 @@ def handle_user_query(user_question: str, retries: int = 2):
             "error": None,
     }
 
-    logging.info("[%s] Generated SQL: %s", request_id, sql_queries)
 
 def handle_manual_query(user_query: str):
     try: 
