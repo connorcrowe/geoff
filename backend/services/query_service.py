@@ -3,7 +3,12 @@ import uuid
 import time
 from datetime import datetime
 
-from core import db, geo, llm, prompt_builder
+from utils.embed import embed_text
+from db.vector_db import select_relevant_tables, select_relevant_examples
+from core.parse_results import parse_results
+from core.query_builder import build_query
+
+from core import llm, prompt_builder
 
 logging.basicConfig(
     filename="logs/query_service.log",
@@ -13,51 +18,54 @@ logging.basicConfig(
 
 def handle_user_query(user_question: str, retries: int = 2):
     start_time = time.time()
+    request_id = str(uuid.uuid4())
+    logging.info("[%s] User Question: %s", request_id, user_question)
+
+    # 1. Embed the input
+    question_embedding = embed_text(user_question)
     
-    # 1: Select relevant tables and examples
-    relevant_tables = prompt_builder.select_tables(user_question)
+    # 2: Select relevant tables and examples
+    relevant_tables = select_relevant_tables(question_embedding)
+    #print(f"[MAIN] Relevant tables: {relevant_tables}")
 
-    print(f"[MAIN] Relevant tables: {relevant_tables}")
+    # 3: Fetch schema and column descriptions for relevant tables and put in text form for prompting
+    schema_text = prompt_builder.build_schema_prompt(relevant_tables)
 
-    schema_prompt = prompt_builder.build_schema_prompt(relevant_tables)
-    examples_prompt = prompt_builder.build_examples_prompt(relevant_tables)
+    # 4: Fetch most similar examples and put in text form for prompting
+    relevant_examples = select_relevant_examples(question_embedding)
+    examples_text = prompt_builder.build_examples_prompt(relevant_examples)
 
-    previous_sql = None
-    previous_error = None
-    for attempt in range(retries + 1):
-        
-        # 2: Build prompt for LLM
-        llm_prompt = prompt_builder.build_full_prompt(user_question, schema_prompt, examples_prompt, previous_sql, previous_error)
+    # 5: Build full prompt
+    prompt = prompt_builder.build_full_prompt(user_question, schema_text, examples_text)
 
-        # 3: Generate SQL
-        sql = llm.generate_sql(llm_prompt)
+    # 6: Call LLM to generate raw JSON plan
+    plan_raw = llm.generate_json_plan(prompt)
+    print(f"[MAIN] Plan: {type(plan_raw)}, {plan_raw}")
+    
+    duration = time.time() - start_time
+    logging.info("[%s] Plan Generated | Duration: %.3f sec", request_id, duration)
+    
+    # 7: Validate plan
+    # plan = validate_json.plan.validate(plan_raw)
 
-        request_id = str(uuid.uuid4())
-        logging.info("[%s] User Question: %s", request_id, user_question)
-        logging.info("[%s] Generated SQL: %s", request_id, sql)
+    # 8: Turn JSON Plan to SQL
+    sql_queries = build_query(plan_raw)
+    print("[MAIN] Result: ", sql_queries)
 
-        # 4: Execute
-        try:
-            rows, colnames, er = db.execute_sql(sql)
-            layers = geo.convert_to_geo_layers(rows, colnames)
+    # 9: Execute SQL statements
+    layers = parse_results(sql_queries)
+    logging.info("[%s] Generated SQL: %s", request_id, sql_queries)
 
-            duration = time.time() - start_time
-            logging.info("[%s] Execution Status: SUCCESS | Duration: %.3f sec", request_id, duration)
 
-            return {
-                "sql": sql.strip(),
-                "layers": layers,
-                "error": None,
-            }
+    duration = time.time() - start_time
+    logging.info("[%s] Execution Status: SUCCESS | Duration: %.3f sec", request_id, duration)
 
-        except Exception as e:
-            duration = time.time() - start_time
-            logging.error("[%s] Execution Status: FAILURE | Duration: %.3f sec | Error: %s", request_id, duration, str(e))
+    return {
+            "sql": "",
+            "layers": layers,
+            "error": None,
+    }
 
-            if attempt >= retries:
-                return {"sql": sql, "error": str(e)}
-            previous_sql = sql
-            previous_error = e
 
 def handle_manual_query(user_query: str):
     try: 

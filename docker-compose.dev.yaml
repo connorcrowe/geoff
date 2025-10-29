@@ -1,7 +1,7 @@
 services:
   db:
-    #build: ./db
-    image: postgis/postgis:15-3.3
+    build: ./db
+    #image: postgis/postgis:15-3.3
     container_name: geoff-db
     ports:
       - "5432:5432"

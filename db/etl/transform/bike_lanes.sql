@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS data.bike_lanes;
 CREATE TABLE data.bike_lanes AS
 SELECT
     CAST(_id AS integer) AS id,
-    CAST(segment_id AS integer) AS segment_id,
+    --CAST(segment_id AS integer) AS segment_id,
     NULLIF(TRIM(installed::text), '')::integer AS installed_year,
     NULLIF(TRIM(upgraded::text), '')::integer AS upgraded_year,
     --NULLIF(pre_amalgamation, '')::text AS pre_amalgamation,
@@ -21,5 +21,15 @@ SELECT
 FROM staging.bike_lanes_raw;
 
 ALTER TABLE data.bike_lanes ADD PRIMARY KEY (id);
-
 CREATE INDEX ON data.bike_lanes USING GIST (geometry);
+
+-- Add descriptions
+COMMENT ON COLUMN data.bike_lanes.id IS 'Unique identifier';
+COMMENT ON COLUMN data.bike_lanes.installed_year IS 'Year the bike lane was first installed';
+COMMENT ON COLUMN data.bike_lanes.upgraded_year IS 'Year the bike lane was last upgraded';
+COMMENT ON COLUMN data.bike_lanes.street_name IS 'Primary street name where the bike lane is located';
+COMMENT ON COLUMN data.bike_lanes.from_street IS 'Cross street marking start of the bike lane';
+COMMENT ON COLUMN data.bike_lanes.to_street IS 'Cross street marking the end of the bike lane';
+COMMENT ON COLUMN data.bike_lanes.lane_type IS 'Type of infrastructure (e.g Sharrows, multi-use trail)';
+COMMENT ON COLUMN data.bike_lanes.converted IS 'Year the bike lane was converted';
+COMMENT ON COLUMN data.bike_lanes.geometry IS 'Geometry: line segment of the bike lane';

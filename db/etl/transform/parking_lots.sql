@@ -17,5 +17,9 @@ WHERE geom IS NOT NULL
   AND NOT ST_IsEmpty(geom);
 
 ALTER TABLE data.parking_lots ADD PRIMARY KEY (id);
-
 CREATE INDEX ON data.parking_lots USING GIST (geometry);
+
+-- Add descriptions
+COMMENT ON COLUMN data.parking_lots.id IS 'Unique identifier';
+COMMENT ON COLUMN data.parking_lots.last_updated IS 'Data of last change to lot data';
+COMMENT ON COLUMN data.parking_lots.geometry IS 'Geometry: boundary polygon of the parking lot';

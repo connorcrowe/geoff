@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ""
 
-export default function MoreInfoModal({ isOpen, onClose }) {
-    const [schemas, setSchemas] = useState({});
+export default function MoreInfoModal({ schemas, isOpen, onClose }) {
     const [selectedDataset, setSelectedDataset] = useState(null);
 
-    useEffect(() => {
-        if (isOpen) {
-            fetch(`${API_BASE}/api/schemas`)
-                .then(res => res.json())
-                .then(data => setSchemas(data));
-        }
-    }, [isOpen]);
+useEffect(() => {
+  if (isOpen && schemas) {
+    const firstDataset = Object.keys(schemas)[0];
+    setSelectedDataset(firstDataset);
+  }
+}, [isOpen, schemas]);
 
     if (!isOpen) return null;
 
@@ -61,17 +59,16 @@ export default function MoreInfoModal({ isOpen, onClose }) {
                     <thead>
                         <tr className="text-left border-b">
                         <th className="pb-1">Field</th>
-                        
                         <th className="pb-1">Description</th>
                         </tr>
                     </thead>
                     <tbody>
                         {schemas[selectedDataset].map(col => (
-                        <tr key={col.name} className="border-b">
+                        <tr key={col.column_name} className="border-b">
                             <td className="py-1">
-                                {col.name}
+                                {col.column_name}
                                 <br />
-                                <span className="text-zinc-400 text-xs">{col.type}</span>
+                                <span className="text-zinc-400 text-xs">{col.column_type}</span>
                             </td>
                             
                             <td className="py-1">{col.description}</td>

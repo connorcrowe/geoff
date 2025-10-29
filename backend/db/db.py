@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 
 from config.settings import DB_CONFIG, DEBUG_MODE
 
@@ -12,15 +13,15 @@ conn.commit()
 
 def execute_sql(sql: str):
     """Executes SQL and catches errors, rolling back if necessary."""
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             cur.execute(sql)
             rows = cur.fetchall()
-            colnames = [desc[0] for desc in cur.description]
-            return rows, colnames, None
+            #colnames = [desc[0] for desc in cur.description]
+            return rows 
 
         except Exception as e:
             if DEBUG_MODE:
                 print(f"(DEUBG)[DB] SQL execution failed: {e}")
             conn.rollback()
-            return None, None, str(e)
+            return None, None

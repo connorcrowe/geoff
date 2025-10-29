@@ -11,5 +11,13 @@ SELECT
 FROM staging.fire_stations_raw;
 
 ALTER TABLE data.fire_stations ADD PRIMARY KEY (id);
-
 CREATE INDEX ON data.fire_stations USING GIST (geometry);
+
+-- Add descriptions
+COMMENT ON COLUMN data.fire_stations.id IS 'Unique identifier';
+COMMENT ON COLUMN data.fire_stations.address IS 'Street address of fire stations';
+COMMENT ON COLUMN data.fire_stations.municipality IS 'Municipality of the station';
+COMMENT ON COLUMN data.fire_stations.station_no IS 'FD number of the station';
+COMMENT ON COLUMN data.fire_stations.year_built IS 'Year the station was built';
+COMMENT ON COLUMN data.fire_stations.type IS 'Fire station or operaitons centre';
+COMMENT ON COLUMN data.fire_stations.geometry IS 'Geometry: point location of the fire station';

@@ -16,6 +16,7 @@ export default function App() {
 
   const [resultsSize, setResultsSize] = useState("normal"); // "collapsed" | "normal" | "expanded"
   const [examples, setExamples] = useState([]);
+  const [schemas, setSchemas] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -25,6 +26,12 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => setExamples(data))
   }, []);
+
+  useEffect(() => {
+  fetch(`${API_BASE}/api/schemas`)
+    .then((res) => res.json())
+    .then((data) => setSchemas(data));
+}, []);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -88,7 +95,7 @@ export default function App() {
       >
         More Info
       </button>
-      <MoreInfoModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+      <MoreInfoModal schemas = {schemas} isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
 
       {/* Map */}
       <div className="absolute inset-0 z-0">
@@ -117,7 +124,7 @@ export default function App() {
 
       {/* Dataset Buttons */}
       <div className="absolute bottom-4 w-full flex justify-center z-50">
-        <Chips examples={examples} setQuery={setQuery} />
+        <Chips schemas={schemas} setQuery={setQuery} />
       </div>
 
       {/* Prompt Bar */}

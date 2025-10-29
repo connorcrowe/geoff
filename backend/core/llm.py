@@ -1,6 +1,6 @@
 import requests
 import re
-
+import json
 import os
 
 #OLLAMA_API_URL = os.getenv("LLM_API_URL")
@@ -54,3 +54,30 @@ def generate_sql(prompt) -> str:
         return cleaned_sql
 
     return raw_response
+
+def generate_json_plan(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "model": OPENAI_MODEL,
+        "messages": [
+            {"role": "system", "content": "You are an expert who generates JSON plans from templates."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0,  
+        "max_tokens": 1024
+    }
+
+    res = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
+    res.raise_for_status()
+    raw_response = res.json()["choices"][0]["message"]["content"]
+
+    # Convert str to dict
+    response_cleaned = raw_response.lstrip("`").lstrip("json").rstrip("`").strip()
+    #print(f"[LLM] Response: {response_cleaned}")
+    plan_dict = json.loads(response_cleaned.replace("'", '"'))
+
+    return plan_dict
