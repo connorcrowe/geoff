@@ -1028,6 +1028,58 @@ examples_embedded = [
                 }
             ]
         }
+    },
+    {
+        "type": "select_1.0",
+        "sources": [
+            "neighbourhoods"
+        ],
+        "user_query": "How big is each neighbourhood?",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "neighbourhoods",
+                            "columns": [
+                                "area_name",
+                                "ST_Area(geometry)",
+                                "geometry"
+                            ],
+                            "filters": []
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "type": "select_1.0",
+        "sources": [
+            "bike_lanes"
+        ],
+        "user_query": "How long is each bike lane?",
+        "plan": {
+            "action": "select",
+            "groups": [
+                {
+                    "source_tables": [
+                        {
+                            "table": "bike_lanes",
+                            "columns": [
+                                "street_name",
+                                "from_street",
+                                "to_street",
+                                "ST_Length(geometry)",
+                                "geometry"
+                            ],
+                            "filters": []
+                        }
+                    ]
+                }
+            ]
+        }
     }
 ]
 

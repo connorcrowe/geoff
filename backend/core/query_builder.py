@@ -1,3 +1,5 @@
+import re
+
 from typing import Dict, List
 
 def build_query(plan: Dict) -> List[str]:
@@ -181,9 +183,24 @@ def _build_filters(filters: list) -> str:
 def _format_columns(columns: list[str], table: str=None, exclude_geom: bool=False) -> str:
     formatted = []
     for col in columns:
+        # Handle geometry, turn to GeoJSON
         if col.lower() == "geometry":
             if exclude_geom: continue
             formatted.append(f"ST_AsGeoJSON({table}.{col}) AS geometry")
+
+        # Handle single column spatial functions (ST_Area, ST_Length)    
+        elif "st_" in col.lower():
+            match = re.search(r'\b(ST_[A-Za-z0-9_]+)\s*\(\s*([A-Za-z0-9_."]+)\s*\)', col, re.IGNORECASE)
+            
+            spatial_func = match.group(1).lower()
+            spatial_arg = match.group(2)
+            unit = "m2" if spatial_func.lower() == "st_area" else "m"
+            
+            formatted.append(f"to_char( {spatial_func}({spatial_arg}::geography) "
+                             f", 'FM999,999,999,999,999.99') "
+                             f"as {table}_{spatial_func[3:]}_{unit}")
+
+        # All other column types                             
         else: formatted.append(f"{table}.{col}")
     return ", ".join(formatted)
 
