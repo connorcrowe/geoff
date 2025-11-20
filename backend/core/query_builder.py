@@ -137,7 +137,7 @@ def _build_select_clause(query: Dict) -> str:
             # If aggregate function specified, wrap expression
             if "aggregate" in col:
                 agg_func = col["aggregate"].upper()
-                expr = f"{agg_func}({expr})"
+                expr = f"{agg_func}({expr}) AS {col['name']}"
             
             # Add alias if provided
             if "alias" in col:
@@ -156,7 +156,7 @@ def _build_select_clause(query: Dict) -> str:
             # Apply aggregate function if specified
             if "aggregate" in col:
                 agg_func = col["aggregate"].upper()
-                col_ref = f"{agg_func}({col_ref})"
+                col_ref = f"{agg_func}({col_ref}) AS {col_name}"
             
             # Add alias if provided
             if "alias" in col:
