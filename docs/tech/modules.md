@@ -89,75 +89,96 @@ User Query → Embed → Vector Search → Prompt Building → LLM → JSON Plan
 **Main Function**: `build_query(plan: Dict) -> List[str]`
 
 **Interface**:
-- **Input**: JSON plan dict (see [`specifications/json_plan.md`](../json_plan.md))
+- **Input**: JSON plan dict (see [`../specs/json_plan.md`](../specs/json_plan.md))
 - **Output**: List of SQL query strings (one per layer)
+
+**Supported Query Types**:
+- **SELECT**: Standard queries with filters
+- **AGGREGATE**: Queries with GROUP BY and aggregate functions (SUM, COUNT, AVG, MIN, MAX, STDDEV)
+- **UNION**: Merge multiple queries with UNION or UNION ALL
+- **CTE**: Common Table Expressions (WITH clauses) for complex queries
 
 **Supported Query Patterns**:
 
-1. **Simple SELECT** - No joins, just filters
+1. **Simple SELECT** - Filtering and sorting
 ```sql
-SELECT table.col1, table.col2, ST_AsGeoJSON(table.geometry) AS geometry
+SELECT col1, col2, ST_AsGeoJSON(geometry) AS geometry
 FROM table
 WHERE condition
+ORDER BY col1 DESC
+LIMIT 10
 ```
 
-2. **Spatial Filter (EXISTS)** - Show items near other items
+2. **Spatial Filter (EXISTS)** - Items near other features
 ```sql
-SELECT DISTINCT left_table.*, ST_AsGeoJSON(left_table.geometry) AS geometry
-FROM left_table
+SELECT DISTINCT t1.*, ST_AsGeoJSON(t1.geometry) AS geometry
+FROM table1 t1
 WHERE EXISTS (
-    SELECT 1 FROM right_table
-    WHERE ST_DWithin(left_table.geometry::geography, 
-                     right_table.geometry::geography, 
-                     distance)
+    SELECT 1 FROM table2 t2
+    WHERE ST_DWithin(t1.geometry::geography, t2.geometry::geography, 500)
 )
 ```
-*Returns both left and right tables as separate queries/layers*
 
-3. **Spatial Join** - Pairwise matching with spatial relationship
+3. **Spatial Join** - Pairwise spatial relationships
 ```sql
-SELECT DISTINCT left_table.*, right_table.name, 
-       ST_AsGeoJSON(left_table.geometry) AS geometry
-FROM left_table
-JOIN right_table 
-ON ST_Intersects(left_table.geometry::geography, 
-                 right_table.geometry::geography)
+SELECT DISTINCT t1.col1, t2.col2, ST_AsGeoJSON(t1.geometry) AS geometry
+FROM table1 t1
+INNER JOIN table2 t2 ON ST_Intersects(t1.geometry, t2.geometry)
 ```
 
 4. **Attribute Join** - Join on non-spatial columns
 ```sql
-SELECT DISTINCT left_table.*, right_table.data,
-       ST_AsGeoJSON(left_table.geometry) AS geometry
-FROM left_table
-JOIN right_table 
-ON left_table.id = right_table.foreign_id
+SELECT t1.*, t2.data, ST_AsGeoJSON(t1.geometry) AS geometry
+FROM table1 t1
+LEFT JOIN table2 t2 ON t1.id = t2.foreign_id
 ```
 
-**Spatial Functions Supported**:
-- `ST_DWithin(geom1, geom2, distance)` - Within distance (meters)
-- `ST_Intersects(geom1, geom2)` - Geometries intersect
-- `ST_Contains(geom1, geom2)` - geom1 contains geom2
-- `ST_Within(geom1, geom2)` - geom1 within geom2
+5. **Aggregation** - GROUP BY with aggregate functions
+```sql
+SELECT n.name, SUM(ST_Area(p.geometry::geography)) AS total_area,
+       ST_AsGeoJSON(n.geometry) AS geometry
+FROM neighbourhoods n
+JOIN parcels p ON ST_Intersects(n.geometry, p.geometry)
+GROUP BY n.name, n.geometry
+```
 
-**Special Features**:
-- **Automatic GeoJSON conversion**: Geometry columns automatically converted via `ST_AsGeoJSON()`
-- **Computed spatial columns**: Supports `ST_Area()` and `ST_Length()` with formatting
-- **Geography casting**: Uses `::geography` for accurate distance calculations
+6. **CTE Query** - Complex queries with WITH clauses
+```sql
+WITH filtered AS (
+    SELECT * FROM table WHERE condition
+)
+SELECT f.col1, ST_AsGeoJSON(f.geometry) AS geometry
+FROM filtered f
+WHERE f.col2 > 100
+```
 
-**Key Functions**:
-- `_build_select(plan)`: Main SELECT builder, handles all join types
-- `_build_filters(filters)`: Converts filter list to WHERE clause
-- `_format_columns(columns, table, exclude_geom)`: Formats column list with table prefix
+7. **UNION Query** - Merge multiple datasets
+```sql
+SELECT 'Fire' AS type, address, ST_AsGeoJSON(geometry) AS geometry FROM fire_stations
+UNION ALL
+SELECT 'Police' AS type, address, ST_AsGeoJSON(geometry) AS geometry FROM police_stations
+```
 
-**Key Limitations**:
-- ❌ **No aggregations**: Cannot generate GROUP BY, COUNT, SUM, AVG
-- ❌ **No computed columns**: Cannot generate expressions in SELECT (except ST_Area/ST_Length)
-- ❌ **No CTEs**: No WITH clauses or complex subqueries
-- ❌ **Limited operators**: Only =, !=, >, <, >=, <=, LIKE, IN supported
-- ❌ **Single spatial function per query**: Cannot combine ST_DWithin AND ST_Intersects
-- ⚠️ **Hardcoded distance units**: Always meters for ST_DWithin
+**Supported Features**:
+- **Spatial Operations**: ST_DWithin, ST_Intersects, ST_Contains, ST_Within
+- **Spatial Functions**: ST_Area, ST_Length, ST_Centroid, ST_Perimeter
+- **Aggregate Functions**: SUM, COUNT, AVG, MIN, MAX, STDDEV
+- **Filter Operators**: <, <=, >, >=, =, !=, ILIKE, BETWEEN, IN, IS NULL, IS NOT NULL
+- **Logical Operators**: AND, OR
+- **Computed Columns**: SQL expressions with formatting (to_char)
+- **Join Types**: INNER, LEFT, RIGHT, FULL
+- **Query Clauses**: WHERE, GROUP BY, ORDER BY, LIMIT, DISTINCT
 
-**Testing**: [`tests/backend/core/test_query_builder.py`](../../tests/backend/core/test_query_builder.py:1)
+**Table Disambiguation**:
+- **Critical**: When queries include JOINs, all column names in the JSON plan **must** include explicit table prefixes (e.g., `"s.name"`, `"fs.address"`)
+- This prevents ambiguous column reference errors when multiple tables have columns with the same name
+- See [`../specs/json_plan.md`](../specs/json_plan.md) for detailed examples
+
+**Key Design Choices**:
+- **No automatic prefixing**: Column names used exactly as specified in JSON plan
+- **Explicit disambiguation**: JSON plan responsible for table prefixes in joins
+- **Geography casting**: Uses `::geography` for distance operations (meters)
+- **GeoJSON output**: All geometry columns converted via `ST_AsGeoJSON()`
 
 **Dependencies**:
 - **Used by**: [`query_service`](../../backend/services/query_service.py:1), [`parse_results`](../../backend/core/parse_results.py:1)
