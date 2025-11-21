@@ -1,0 +1,36 @@
+{
+    "id": 16,
+    "user_query": "How long is each bike lane?",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes"],
+        "components": ["simple_select", "spatial_column"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "bike_lanes_with_length",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "from_street"},
+                        {"name": "to_street"},
+                        {
+                            "name": "length_m",
+                            "expression": "to_char(ST_Length(geometry::geography), 'FM999,999,999.99')",
+                            "alias": "length_m"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "id": 17,
+    "user_query": "Show all attractions",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["attractions"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "attractions",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "attractions",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "address"},
+                        {"name": "category"},
+                        {"name": "website"},
+                        {"name": "description"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

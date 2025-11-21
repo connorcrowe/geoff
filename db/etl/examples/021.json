@@ -1,0 +1,30 @@
+{
+    "id": 21,
+    "user_query": "Show all parks",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parks"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "parks",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parks",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "type"},
+                        {"name": "amenities"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "id": 22,
+    "user_query": "Show all police stations",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["police_stations"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "police_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "police_stations",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "address"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "id": 29,
+    "user_query": "Show protected bike lanes installed since 2020",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes"],
+        "components": ["simple_select", "logical_filter", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "protected_bike_lanes_2020_plus",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {
+                            "name": "street_name"
+                        },
+                        {
+                            "name": "lane_type"
+                        },
+                        {
+                            "name": "installed_year"
+                        },
+                        {
+                            "name": "geometry",
+                            "expression": "ST_AsGeoJSON(geometry)",
+                            "alias": "geometry"
+                        }
+                    ],
+                    "filters": [
+                        {
+                            "column": "lane_type",
+                            "operator": "ILIKE",
+                            "value": "%protected%"
+                        },
+                        {
+                            "column": "installed_year",
+                            "operator": ">=",
+                            "value": 2020,
+                            "logic": "AND"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+}

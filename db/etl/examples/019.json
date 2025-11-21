@@ -1,0 +1,29 @@
+{
+    "id": 19,
+    "user_query": "Show all neighbourhoods",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["neighbourhoods"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "neighbourhoods",
+                    "columns": [
+                        {"name": "area_name"},
+                        {"name": "classification"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,51 @@
+{
+    "id": 5,
+    "user_query": "Show all neighbourhoods that intersect ward boundaries",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["neighbourhoods", "wards"],
+        "components": ["simple_select", "spatial_filter", "context_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_intersecting_wards",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "neighbourhoods",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "area_name"},
+                        {"name": "classification"},
+                        {"name": "classification_code"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "spatial_filters": [
+                        {
+                            "operation": "ST_Intersects",
+                            "target_table": "wards",
+                            "use_exists": true
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "wards",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "wards",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "ward_id"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

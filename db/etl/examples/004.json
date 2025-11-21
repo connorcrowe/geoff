@@ -1,0 +1,35 @@
+{
+    "id": 4,
+    "user_query": "Get all fire stations built before 1980",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "fire_stations_pre_1980",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "fire_stations",
+                    "columns": [
+                        {"name": "station_no"},
+                        {"name": "address"},
+                        {"name": "municipality"},
+                        {"name": "year_built"},
+                        {"name": "type"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "year_built", "operator": "<", "value": 1980}
+                    ]
+                }
+            }
+        ]
+    }
+}

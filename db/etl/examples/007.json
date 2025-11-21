@@ -1,0 +1,78 @@
+{
+    "id": 7,
+    "user_query": "Show the ward that the Allan Gardens are in",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["attractions", "wards"],
+        "components": ["simple_select", "filter", "attribute_join", "context_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "allan_gardens_ward",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "attractions",
+                    "alias": "a",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "a.name", "alias": "attraction_name"},
+                        {"name": "a.address"},
+                        {"name": "w.name", "alias": "ward_name"},
+                        {"name": "w.ward_id"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(a.geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "a.name", "operator": "ILIKE", "value": "%Allan Gardens%"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "wards",
+                            "alias": "w",
+                            "condition": {
+                                "type": "attribute",
+                                "left_column": "a.ward_id",
+                                "right_column": "w.ward_id"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "ward_containing_allan_gardens",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "wards",
+                    "alias": "w",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "w.name"},
+                        {"name": "w.ward_id"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(w.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "attractions",
+                            "alias": "a",
+                            "condition": {
+                                "type": "attribute",
+                                "left_column": "w.ward_id",
+                                "right_column": "a.ward_id"
+                            }
+                        }
+                    ],
+                    "filters": [
+                        {"column": "a.name", "operator": "ILIKE", "value": "%Allan Gardens%"}
+                    ]
+                }
+            }
+        ]
+    }
+}
