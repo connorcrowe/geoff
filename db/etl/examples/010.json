@@ -1,0 +1,35 @@
+{
+    "id": 10,
+    "user_query": "Show all bike lanes that are not sharrows",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "bike_lanes_not_sharrows",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "installed_year"},
+                        {"name": "from_street"},
+                        {"name": "to_street"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "lane_type", "operator": "NOT ILIKE", "value": "%sharrow%"}
+                    ]
+                }
+            }
+        ]
+    }
+}

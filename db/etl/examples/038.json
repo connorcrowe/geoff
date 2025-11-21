@@ -1,0 +1,69 @@
+{
+    "id": 38,
+    "user_query": "Show wards with more than 3 fire stations",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations", "wards"],
+        "components": ["aggregation", "spatial_join", "cte", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "wards_with_many_fire_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "cte",
+                    "ctes": [
+                        {
+                            "name": "fire_station_counts",
+                            "query": {
+                                "type": "aggregate",
+                                "table": "fire_stations",
+                                "alias": "fs",
+                                "columns": [
+                                    {"name": "w.ward_id"},
+                                    {"name": "w.name"},
+                                    {"name": "w.geometry"},
+                                    {
+                                        "name": "fire_station_count",
+                                        "aggregate": "count",
+                                        "expression": "*"
+                                    }
+                                ],
+                                "joins": [
+                                    {
+                                        "type": "INNER",
+                                        "table": "wards",
+                                        "alias": "w",
+                                        "condition": {
+                                            "type": "spatial",
+                                            "operation": "ST_Intersects"
+                                        }
+                                    }
+                                ],
+                                "group_by": ["w.ward_id", "w.name", "w.geometry"]
+                            }
+                        }
+                    ],
+                    "main_query": {
+                        "type": "select",
+                        "table": "fire_station_counts",
+                        "alias": "fsc",
+                        "columns": [
+                            {"name": "fsc.ward_id"},
+                            {"name": "fsc.name", "alias": "ward_name"},
+                            {"name": "fsc.fire_station_count"},
+                            {"name": "geometry", "expression": "ST_AsGeoJSON(fsc.geometry)", "alias": "geometry"}
+                        ],
+                        "filters": [
+                            {"column": "fire_station_count", "operator": ">", "value": 3}
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "id": 6,
+    "user_query": "List all parks and the neighbourhoods they fall within",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parks", "neighbourhoods"],
+        "components": ["simple_select", "spatial_join"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "parks_with_neighbourhoods",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parks",
+                    "alias": "p",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "p.name", "alias": "park_name"},
+                        {"name": "p.type", "alias": "park_type"},
+                        {"name": "p.amenities"},
+                        {"name": "n.area_name", "alias": "neighbourhood_name"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(p.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "neighbourhoods",
+                            "alias": "n",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Within"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

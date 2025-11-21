@@ -1,0 +1,51 @@
+{
+    "id": 30,
+    "user_query": "Show the 5 longest bike lanes",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes"],
+        "components": ["simple_select", "spatial_column", "order_by", "limit"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "longest_bike_lanes",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {
+                            "name": "street_name"
+                        },
+                        {
+                            "name": "from_street"
+                        },
+                        {
+                            "name": "to_street"
+                        },
+                        {
+                            "name": "bike_lanes_length_m",
+                            "expression": "to_char(ST_Length(geometry::geography), 'FM999,999,999.99')"
+                        },
+                        {
+                            "name": "geometry",
+                            "expression": "ST_AsGeoJSON(geometry)",
+                            "alias": "geometry"
+                        }
+                    ],
+                    "order_by": [
+                        {
+                            "expression": "ST_Length(geometry::geography)",
+                            "direction": "DESC"
+                        }
+                    ],
+                    "limit": 5
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "id": 15,
+    "user_query": "How big is each neighbourhood?",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["neighbourhoods"],
+        "components": ["simple_select", "spatial_column"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_with_area",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "neighbourhoods",
+                    "columns": [
+                        {"name": "area_name"},
+                        {"name": "classification"},
+                        {
+                            "name": "area_m2",
+                            "expression": "to_char(ST_Area(geometry::geography), 'FM999,999,999.99')",
+                            "alias": "area_m2"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

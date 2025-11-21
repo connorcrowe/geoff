@@ -1,0 +1,29 @@
+{
+    "id": 24,
+    "user_query": "Show all wards",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["wards"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "wards",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "wards",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "ward_id"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,76 @@
+{
+    "id": 41,
+    "user_query": "Calculate parking lot density (area per square km) by neighbourhood",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parking_lots", "neighbourhoods"],
+        "components": ["aggregation", "spatial_join", "spatial_column", "order_by", "reference_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_parking_density",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "neighbourhoods",
+                    "alias": "n",
+                    "columns": [
+                        {"name": "n.id", "alias": "neighbourhood_id"},
+                        {"name": "n.area_name"},
+                        {
+                            "name": "total_parking_area_m2",
+                            "aggregate": "sum",
+                            "expression": "ST_Area(pl.geometry::geography)"
+                        },
+                        {
+                            "name": "neighbourhood_area_km2",
+                            "expression": "ST_Area(n.geometry::geography) / 1000000",
+                            "alias": "neighbourhood_area_km2"
+                        },
+                        {
+                            "name": "parking_density_m2_per_km2",
+                            "expression": "COALESCE(SUM(ST_Area(pl.geometry::geography)) / NULLIF(ST_Area(n.geometry::geography) / 1000000, 0), 0)",
+                            "alias": "parking_density_m2_per_km2"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "LEFT",
+                            "table": "parking_lots",
+                            "alias": "pl",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["n.id", "n.area_name", "n.geometry"],
+                    "order_by": [
+                        {
+                            "expression": "COALESCE(SUM(ST_Area(pl.geometry::geography)) / NULLIF(ST_Area(n.geometry::geography) / 1000000, 0), 0)",
+                            "direction": "DESC"
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "parking_lots",
+                "layer_type": "reference",
+                "query": {
+                    "type": "select",
+                    "table": "parking_lots",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "last_updated"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

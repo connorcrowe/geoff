@@ -6,7 +6,7 @@ Geoff becomes a useful tool in making geospatial insights accessible in the doma
 
 ## Core End State Capabilities
 - Geoff becomes able to answer all questions listed in @docs/use_cases
-- Geoff turns natural language questions about a city or small region into map visualisations or helpful data table results
+- Geoff turns natural language questions about a city or small region into map visualizations or helpful data table results
 - Geoff becomes able to perform complicated analysis, using data from previous queries 
 - Geoff becomes about to learn from previous questions and user feedback
 - Geoff's results are able to be exported or shared easily

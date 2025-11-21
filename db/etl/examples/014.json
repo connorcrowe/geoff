@@ -1,0 +1,35 @@
+{
+    "id": 14,
+    "user_query": "List all performing arts venues",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["attractions"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "performing_arts_venues",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "attractions",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "category"},
+                        {"name": "address"},
+                        {"name": "phone"},
+                        {"name": "website"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "category", "operator": "ILIKE", "value": "%performing arts%"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,45 @@
+{
+    "id": 25,
+    "user_query": "List each school and the nearest fire station within 1 kilometer",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["schools", "fire_stations"],
+        "components": ["simple_select", "spatial_join"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "schools_with_fire_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "schools",
+                    "alias": "s",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "s.name", "alias": "school_name"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(s.geometry)", "alias": "geometry"},
+                        {"name": "fs.station_no", "alias": "fire_station_no"},
+                        {"name": "fs.address", "alias": "fire_station_address"},
+                        {"name": "fs.municipality"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "fire_stations",
+                            "alias": "fs",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_DWithin",
+                                "distance": 1000
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

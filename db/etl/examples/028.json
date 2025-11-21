@@ -1,0 +1,99 @@
+{
+    "id": 28,
+    "user_query": "Merge all emergency service locations into one layer",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["ambulance_stations", "fire_stations", "police_stations"],
+        "components": ["union", "simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "emergency_services",
+                "layer_type": "primary",
+                "query": {
+                    "type": "union",
+                    "union_type": "ALL",
+                    "queries": [
+                        {
+                            "type": "select",
+                            "table": "fire_stations",
+                            "alias": "fs",
+                            "columns": [
+                                {
+                                    "name": "fs.address",
+                                    "alias": "location"
+                                },
+                                {
+                                    "name": "service_type",
+                                    "expression": "'Fire Station'"
+                                },
+                                {
+                                    "name": "identifier",
+                                    "expression": "CAST(fs.station_no AS text)"
+                                },
+                                {
+                                    "name": "geometry",
+                                    "expression": "ST_AsGeoJSON(fs.geometry)",
+                                    "alias": "geometry"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "select",
+                            "table": "police_stations",
+                            "alias": "ps",
+                            "columns": [
+                                {
+                                    "name": "ps.address",
+                                    "alias": "location"
+                                },
+                                {
+                                    "name": "service_type",
+                                    "expression": "'Police Station'"
+                                },
+                                {
+                                    "name": "identifier",
+                                    "expression": "ps.name"
+                                },
+                                {
+                                    "name": "geometry",
+                                    "expression": "ST_AsGeoJSON(ps.geometry)",
+                                    "alias": "geometry"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "select",
+                            "table": "ambulance_stations",
+                            "alias": "ems",
+                            "columns": [
+                                {
+                                    "name": "ems.address",
+                                    "alias": "location"
+                                },
+                                {
+                                    "name": "service_type",
+                                    "expression": "'Ambulance Station'"
+                                },
+                                {
+                                    "name": "identifier",
+                                    "expression": "ems.ems_name"
+                                },
+                                {
+                                    "name": "geometry",
+                                    "expression": "ST_AsGeoJSON(ems.geometry)",
+                                    "alias": "geometry"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+}

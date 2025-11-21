@@ -26,7 +26,7 @@ This is a natural language to spatial SQL system that converts user questions in
   - Generates 1536-dimension vectors from text
   
 - **Vector Database** (`backend/db/vector_db.py`)
-  - PostgreSQL with pgvector extension
+  - PostgreSQL with `pgvector` extension
   - Two embedding stores:
     - `meta.schema_embeddings` - Table/column descriptions
     - `meta.example_embeddings` - Example query/plan pairs
@@ -45,12 +45,10 @@ This is a natural language to spatial SQL system that converts user questions in
 ### 5. Query Generation
 - **Query Builder** (`backend/core/query_builder.py`)
   - Converts JSON plans to PostGIS SQL
-  - Supports multiple query patterns:
-    - Simple SELECT with filters
-    - Spatial JOINs (ST_DWithin, ST_Intersects)
-    - Spatial EXISTS subqueries
-    - Attribute-based relations
-  - Handles geometry conversion to GeoJSON
+  - Supports SELECT, AGGREGATE, UNION, and CTE query types
+  - Handles spatial/attribute joins, filters, grouping, and ordering
+  - Implements table disambiguation for joins (requires explicit table prefixes in JSON plan)
+  - Handles geometry conversion to GeoJSON via ST_AsGeoJSON()
 
 ### 6. Data Layer
 - **Database Service** (`backend/db/db.py`)
@@ -110,8 +108,12 @@ graph TD
 5. **SQL Generation**
    - JSON plan parsed and validated
    - Query builder converts plan to PostGIS SQL
-   - Handles spatial and attribute relationships
-   - Supports multiple query patterns (select, join, exists)
+   - Supports SELECT, AGGREGATE, UNION, and CTE query types
+   - Handles spatial operations (ST_DWithin, ST_Intersects, ST_Contains, ST_Within)
+   - Handles attribute and spatial joins (INNER, LEFT, RIGHT, FULL)
+   - Supports filters with multiple operators and logical combinations
+   - Implements GROUP BY with aggregate functions (SUM, COUNT, AVG, MIN, MAX, STDDEV)
+   - Table disambiguation enforced via explicit prefixes in JSON plan
 
 6. **Execution & Parsing**
    - SQL queries executed against PostgreSQL
@@ -147,7 +149,7 @@ graph TD
 ## Technology Stack
 
 - **API Framework**: FastAPI
-- **Database**: PostgreSQL 15+ with PostGIS and pgvector
+- **Database**: PostgreSQL 15+ with PostGIS and `pgvector`
 - **Embeddings**: OpenAI text-embedding-3-small
 - **LLM**: OpenAI GPT-4o-mini
 - **Language**: Python 3.11+
@@ -158,7 +160,7 @@ graph TD
 The system runs as containerized services (see docker-compose files):
 
 - **Backend Service**: FastAPI application server
-- **Database Service**: PostgreSQL with PostGIS + pgvector
+- **Database Service**: PostgreSQL with PostGIS + `pgvector`
 - **ETL Service**: Periodic data ingestion and embedding generation
 - **Frontend Service**: Web client for user interaction
 

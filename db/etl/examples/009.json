@@ -1,0 +1,33 @@
+{
+    "id": 9,
+    "user_query": "Show all ambulance stations",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["ambulance_stations"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "ambulance_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "ambulance_stations",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "address"},
+                        {"name": "municipality"},
+                        {"name": "ems_id"},
+                        {"name": "ems_name"},
+                        {"name": "ems_website"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

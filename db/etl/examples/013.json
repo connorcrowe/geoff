@@ -1,0 +1,33 @@
+{
+    "id": 13,
+    "user_query": "List dog parks in the city",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parks"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "dog_parks",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parks",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "type"},
+                        {"name": "amenities"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "amenities", "operator": "ILIKE", "value": "%dog%"}
+                    ]
+                }
+            }
+        ]
+    }
+}

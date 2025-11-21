@@ -1,0 +1,45 @@
+{
+    "id": 2,
+    "user_query": "Show schools and parks together",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["schools", "parks"],
+        "components": ["simple_select", "separate_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "schools",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "schools",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "school_type_desc"},
+                        {"name": "school_board_name"},
+                        {"name": "address"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            },
+            {
+                "layer_name": "parks",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parks",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "type"},
+                        {"name": "amenities"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

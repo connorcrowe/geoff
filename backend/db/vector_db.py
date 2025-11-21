@@ -15,7 +15,7 @@ def select_relevant_examples(embedding, score_threshold: float=-0.3):
 def query_example_embeddings(embedding, limit: int=999):
     
     sql = f"""
-        SELECT id, type, sources, user_query, plan, 
+        SELECT id, user_query, plan, 
             embedding <#> '{embedding}' AS score
         FROM meta.example_embeddings
         ORDER BY score
@@ -27,8 +27,6 @@ def query_example_embeddings(embedding, limit: int=999):
     return [
         {
             "id": r["id"],
-            "type": r["type"],
-            "sources": r["sources"],
             "user_query": r["user_query"],
             "plan": r["plan"],
             "score": r["score"]

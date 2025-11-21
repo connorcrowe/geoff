@@ -1,0 +1,28 @@
+{
+    "id": 20,
+    "user_query": "Show all parking lots",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parking_lots"],
+        "components": ["simple_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "parking_lots",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parking_lots",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

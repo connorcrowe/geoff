@@ -1,0 +1,80 @@
+{
+    "id": 34,
+    "user_query": "How many emergency services (fire, police, ambulance) are in each ward?",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations", "police_stations", "ambulance_stations", "wards"],
+        "components": ["aggregation", "spatial_join", "spatial_column"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "wards_emergency_services_count",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "wards",
+                    "alias": "w",
+                    "columns": [
+                        {"name": "w.ward_id"},
+                        {"name": "w.name", "alias": "ward_name"},
+                        {
+                            "name": "fire_station_count",
+                            "aggregate": "count",
+                            "expression": "DISTINCT fs.id"
+                        },
+                        {
+                            "name": "police_station_count",
+                            "aggregate": "count",
+                            "expression": "DISTINCT ps.id"
+                        },
+                        {
+                            "name": "ambulance_station_count",
+                            "aggregate": "count",
+                            "expression": "DISTINCT ems.id"
+                        },
+                        {
+                            "name": "total_emergency_services",
+                            "expression": "COUNT(DISTINCT fs.id) + COUNT(DISTINCT ps.id) + COUNT(DISTINCT ems.id)",
+                            "alias": "total_emergency_services"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(w.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "LEFT",
+                            "table": "fire_stations",
+                            "alias": "fs",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        },
+                        {
+                            "type": "LEFT",
+                            "table": "police_stations",
+                            "alias": "ps",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        },
+                        {
+                            "type": "LEFT",
+                            "table": "ambulance_stations",
+                            "alias": "ems",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["w.ward_id", "w.name", "w.geometry"]
+                }
+            }
+        ]
+    }
+}

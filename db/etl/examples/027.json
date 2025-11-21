@@ -1,0 +1,87 @@
+{
+    "id": 27,
+    "user_query": "Show neighbourhoods with more than 10 parks",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parks", "neighbourhoods"],
+        "components": ["aggregation", "spatial_join", "cte"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_with_many_parks",
+                "layer_type": "primary",
+                "query": {
+                    "type": "cte",
+                    "ctes": [
+                        {
+                            "name": "park_counts",
+                            "query": {
+                                "type": "aggregate",
+                                "table": "parks",
+                                "alias": "p",
+                                "columns": [
+                                    {
+                                        "name": "n.area_name"
+                                    },
+                                    {
+                                        "name": "n.geometry"
+                                    },
+                                    {
+                                        "name": "park_count",
+                                        "aggregate": "count",
+                                        "expression": "*"
+                                    }
+                                ],
+                                "joins": [
+                                    {
+                                        "type": "INNER",
+                                        "table": "neighbourhoods",
+                                        "alias": "n",
+                                        "condition": {
+                                            "type": "spatial",
+                                            "operation": "ST_Intersects"
+                                        }
+                                    }
+                                ],
+                                "group_by": [
+                                    "n.area_name",
+                                    "n.geometry"
+                                ]
+                            }
+                        }
+                    ],
+                    "main_query": {
+                        "type": "select",
+                        "table": "park_counts",
+                        "alias": "pc",
+                        "columns": [
+                            {
+                                "name": "pc.area_name"
+                            },
+                            {
+                                "name": "pc.park_count"
+                            },
+                            {
+                                "name": "geometry",
+                                "expression": "ST_AsGeoJSON(pc.geometry)",
+                                "alias": "geometry"
+                            }
+                        ],
+                        "filters": [
+                            {
+                                "column": "park_count",
+                                "operator": ">",
+                                "value": 10
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+
+}

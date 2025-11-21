@@ -1,0 +1,39 @@
+{
+    "id": 40,
+    "user_query": "10 oldest fire stations still in operation",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations"],
+        "components": ["simple_select", "order_by", "limit"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "oldest_fire_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "fire_stations",
+                    "columns": [
+                        {"name": "station_no"},
+                        {"name": "address"},
+                        {"name": "municipality"},
+                        {"name": "year_built"},
+                        {"name": "type"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "order_by": [
+                        {
+                            "column": "year_built",
+                            "direction": "ASC"
+                        }
+                    ],
+                    "limit": 10
+                }
+            }
+        ]
+    }
+}

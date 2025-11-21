@@ -1,0 +1,31 @@
+{
+    "id": 1,
+    "user_query": "Show all bike lanes",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes"],
+        "components": ["single_select"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "bike_lanes",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "installed_year"},
+                        {"name": "upgraded_year"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

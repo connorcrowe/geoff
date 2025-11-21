@@ -1,0 +1,34 @@
+{
+    "id": 11,
+    "user_query": "Which schools are in the Toronto District School Board?",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["schools"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "tdsb_schools",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "schools",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "school_type_desc"},
+                        {"name": "school_board_name"},
+                        {"name": "address"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "school_board_name", "operator": "ILIKE", "value": "%Toronto District School Board%"}
+                    ]
+                }
+            }
+        ]
+    }
+}
