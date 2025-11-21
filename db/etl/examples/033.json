@@ -1,0 +1,46 @@
+{
+    "id": 33,
+    "user_query": "Find ambulance stations within 2km of each fire station",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations", "ambulance_stations"],
+        "components": ["simple_select", "spatial_join"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "fire_stations_with_ambulance_stations",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "fire_stations",
+                    "alias": "fs",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "fs.station_no", "alias": "fire_station_no"},
+                        {"name": "fs.address", "alias": "fire_station_address"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(fs.geometry)", "alias": "geometry"},
+                        {"name": "ems.ems_name", "alias": "ambulance_station_name"},
+                        {"name": "ems.address", "alias": "ambulance_station_address"},
+                        {"name": "ems.municipality"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "ambulance_stations",
+                            "alias": "ems",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_DWithin",
+                                "distance": 2000
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

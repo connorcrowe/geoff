@@ -1,0 +1,60 @@
+{
+    "id": 31,
+    "user_query": "Show the total length of bike lanes per ward",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes", "wards"],
+        "components": ["aggregation", "spatial_join", "spatial_column", "reference_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "wards_bike_lanes_summary",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "wards",
+                    "alias": "w",
+                    "columns": [
+                        {"name": "w.ward_id"},
+                        {"name": "w.name"},
+                        {
+                            "name": "total_bike_lane_length_m",
+                            "aggregate": "sum",
+                            "expression": "ST_Length(bl.geometry::geography)"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(w.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "INNER",
+                            "table": "bike_lanes",
+                            "alias": "bl",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["w.ward_id", "w.name", "w.geometry"]
+                }
+            },
+            {
+                "layer_name": "bike_lanes",
+                "layer_type": "reference",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

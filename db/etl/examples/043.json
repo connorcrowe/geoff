@@ -1,0 +1,36 @@
+{
+    "id": 43,
+    "user_query": "Calculate average distance between fire stations",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["fire_stations"],
+        "components": ["aggregation"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "fire_stations_avg_distance_summary",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "fire_stations",
+                    "columns": [
+                        {
+                            "name": "total_stations",
+                            "aggregate": "count",
+                            "expression": "*"
+                        },
+                        {
+                            "name": "avg_distance_between_all_m",
+                            "expression": "(SELECT AVG(ST_Distance(fs1.geometry::geography, fs2.geometry::geography)) FROM fire_stations fs1 CROSS JOIN fire_stations fs2 WHERE fs1.id < fs2.id)",
+                            "alias": "avg_distance_between_all_m"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

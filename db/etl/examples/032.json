@@ -1,0 +1,74 @@
+{
+    "id": 32,
+    "user_query": "Calculate the ratio of bike lane length to area for each neighbourhood",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["bike_lanes", "neighbourhoods"],
+        "components": ["aggregation", "spatial_join", "spatial_column", "order_by", "reference_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_bike_lane_density",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "neighbourhoods",
+                    "alias": "n",
+                    "columns": [
+                        {"name": "n.id", "alias": "neighbourhood_id"},
+                        {"name": "n.area_name"},
+                        {
+                            "name": "total_bike_lane_length_m",
+                            "aggregate": "sum",
+                            "expression": "ST_Length(bl.geometry::geography)"
+                        },
+                        {
+                            "name": "neighbourhood_area_m2",
+                            "expression": "ST_Area(n.geometry::geography)"
+                        },
+                        {
+                            "name": "bike_lane_density_ratio",
+                            "expression": "COALESCE(SUM(ST_Length(bl.geometry::geography)) / NULLIF(ST_Area(n.geometry::geography), 0), 0)"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "LEFT",
+                            "table": "bike_lanes",
+                            "alias": "bl",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["n.id", "n.area_name", "n.geometry"],
+                    "order_by": [
+                        {
+                            "expression": "COALESCE(SUM(ST_Length(bl.geometry::geography)) / NULLIF(ST_Area(n.geometry::geography), 0), 0)",
+                            "direction": "DESC"
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "bike_lanes",
+                "layer_type": "reference",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

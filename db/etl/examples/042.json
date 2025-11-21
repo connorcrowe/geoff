@@ -1,0 +1,34 @@
+{
+    "id": 42,
+    "user_query": "Find the perimeter length of each ward boundary",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["wards"],
+        "components": ["simple_select", "spatial_column"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "wards_with_perimeter",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "wards",
+                    "columns": [
+                        {"name": "ward_id"},
+                        {"name": "name"},
+                        {
+                            "name": "perimeter_m",
+                            "expression": "to_char(ST_Perimeter(geometry::geography), 'FM999,999,999.99')",
+                            "alias": "perimeter_m"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

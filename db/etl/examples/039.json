@@ -1,0 +1,40 @@
+{
+    "id": 39,
+    "user_query": "5 parks with the most amenities",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["parks"],
+        "components": ["simple_select", "order_by", "limit"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "parks_most_amenities",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "parks",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "type"},
+                        {"name": "amenities"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "amenities", "operator": "IS NOT NULL"}
+                    ],
+                    "order_by": [
+                        {
+                            "expression": "LENGTH(amenities)",
+                            "direction": "DESC"
+                        }
+                    ],
+                    "limit": 5
+                }
+            }
+        ]
+    }
+}

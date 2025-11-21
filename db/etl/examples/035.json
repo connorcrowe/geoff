@@ -1,0 +1,40 @@
+{
+    "id": 35,
+    "user_query": "Count attractions by category",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["attractions"],
+        "components": ["aggregation", "group_by"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "attractions_by_category",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "attractions",
+                    "alias": "a",
+                    "columns": [
+                        {"name": "a.category"},
+                        {
+                            "name": "attraction_count",
+                            "aggregate": "count",
+                            "expression": "*"
+                        }
+                    ],
+                    "group_by": ["a.category"],
+                    "order_by": [
+                        {
+                            "column": "attraction_count",
+                            "direction": "DESC"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
