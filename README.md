@@ -1,7 +1,5 @@
 # Geoff: The GEOspatial Fact Finder
-
-![Version](https://img.shields.io/badge/version-0.3.0-blue)
-
+![Geoff](https://img.shields.io/badge/version-0.3.0-blue)
 Ask a question, get a map. A natural language interface for querying geospatial data.
 
 **[🌐 Try Geoff Here! 🌎](https://geoff.connorcrowe.ca)**

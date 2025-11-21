@@ -6,6 +6,8 @@ As per [Semantic Versioning](https://semver.org/spec/v2.0.0.html) Geoff is an in
 
 ## [Unreleased]
 
+- 
+
 ## [2025-11-21] - 0.3.0 - Query Builder Enhancement
 
 ### Added
