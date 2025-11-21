@@ -37,6 +37,7 @@ def handle_user_query(user_question: str, retries: int = 2):
 
     # 5: Build full prompt
     prompt = prompt_builder.build_full_prompt(user_question, schema_text, examples_text)
+    #print(f"[MAIN] Prompt generated", prompt)
 
     # 6: Call LLM to generate raw JSON plan
     plan_raw = llm.generate_json_plan(prompt)
@@ -45,6 +46,11 @@ def handle_user_query(user_question: str, retries: int = 2):
     duration = time.time() - start_time
     logging.info("[%s] Plan Generated | Duration: %.3f sec", request_id, duration)
     
+    # import json
+    # plan_raw = json.loads('''
+       
+    # ''')
+
     # 7: Validate plan
     # plan = validate_json.plan.validate(plan_raw)
 
