@@ -288,8 +288,6 @@ Finds example query/plan pairs similar to the user's query.
 [
     {
         "id": 1,
-        "type": "spatial_filter",
-        "sources": ["bike_lanes", "schools"],
         "user_query": "Show bike lanes near schools",
         "plan": {...},  # Full JSON plan
         "score": -0.45
@@ -307,8 +305,8 @@ Finds example query/plan pairs similar to the user's query.
 - Threshold of -0.3 means >0.3 cosine similarity
 
 **Key Limitation**:
-- ⚠️ **Fixed threshold**: -0.3 threshold may not be optimal for all queries
-- ⚠️ **No dynamic adjustment**: Doesn't adjust retrieval based on result count
+- **Fixed threshold**: -0.3 threshold may not be optimal for all queries
+- **No dynamic adjustment**: Doesn't adjust retrieval based on result count
 
 **Testing**: Manual testing only (no automated tests yet)
 
@@ -340,21 +338,6 @@ Finds example query/plan pairs similar to the user's query.
 2. Parse response, strip markdown code fences
 3. Convert JSON string to Python dict
 4. Return structured plan
-
-**Output Cleaning**:
-- Strips markdown code fences (backticks)
-- Removes "json" language identifier
-- Converts single quotes to double quotes
-- Parses to dict via `json.loads()`
-
-**Error Handling**:
-- Raises HTTP errors from API calls
-- May raise JSON parse errors if response malformed
-
-**Legacy Function**:
-- `generate_sql(prompt)`: Direct NL→SQL generation (deprecated, not used)
-
-**Testing**: Integration testing via query pipeline
 
 **Dependencies**:
 - **Used by**: [`query_service`](../../backend/services/query_service.py:1)
@@ -407,8 +390,6 @@ Plan:
 #### `build_full_prompt(user_question, schema_text, examples_text, ...)`
 Assembles complete prompt with user query, schema, and examples.
 
-**Note**: This function exists but is **not currently used** in the pipeline. The LLM receives prompts directly through the system message in [`llm.py`](../../backend/core/llm.py:1).
-
 **Dependencies**:
 - **Used by**: [`query_service`](../../backend/services/query_service.py:1)
 - **Depends on**: None
@@ -434,8 +415,6 @@ Assembles complete prompt with user query, schema, and examples.
 **Usage**: 
 - Query embedding for semantic search
 - Schema/example embeddings (generated via ETL)
-
-**Testing**: Integration testing via vector search
 
 **Dependencies**:
 - **Used by**: [`query_service`](../../backend/services/query_service.py:1), ETL scripts
@@ -471,49 +450,13 @@ Assembles complete prompt with user query, schema, and examples.
 - **Auto-rollback**: Transaction rolled back on errors
 
 **Known Issues**:
-- ⚠️ **Inconsistent return**: Sometimes returns `None`, sometimes `None, None`
-- ⚠️ **Global connection**: Not thread-safe for concurrent requests
-- ⚠️ **No connection pooling**: Uses single persistent connection
-
-**Testing**: Integration testing via query execution
+- **Inconsistent return**: Sometimes returns `None`, sometimes `None, None`
+- **Global connection**: Not thread-safe for concurrent requests
+- **No connection pooling**: Uses single persistent connection
 
 **Dependencies**:
 - **Used by**: All modules that access database
 - **Depends on**: psycopg2, config settings
-
----
-
-### Geometry Processing
-
-**Location**: [`backend/core/geo.py`](../../backend/core/geo.py:1)
-
-**Purpose**: Converts WKB geometry to GeoJSON and builds layer objects.
-
-**Main Function**: `convert_to_geo_layers(rows, colnames) -> List[dict]`
-
-**Status**: ⚠️ **Not currently used in main pipeline**. [`parse_results.py`](../../backend/core/parse_results.py:1) handles geometry conversion directly using `ST_AsGeoJSON()` in SQL.
-
-**Interface**:
-- **Input**: SQL rows (tuples) and column names
-- **Output**: List of layer objects (similar to parse_results)
-
-**Process**:
-1. Identify geometry columns via WKB detection
-2. For each geometry column, build a separate layer
-3. Convert WKB to GeoJSON using shapely
-4. Separate properties from geometry
-
-**Key Functions**:
-- `_find_geometry_columns()`: Detect geometry columns by trying WKB parsing
-- `_build_layer()`: Create layer object for one geometry column
-- `_convert_wkb_to_geojson()`: Convert WKB hex to GeoJSON using shapely
-
-**Why Not Used**:
-Current approach uses `ST_AsGeoJSON()` in SQL which is simpler and more efficient. This module provides an alternative for cases where geometry must be retrieved as WKB.
-
-**Dependencies**:
-- **Used by**: None currently (legacy/alternative approach)
-- **Depends on**: shapely
 
 ---
 

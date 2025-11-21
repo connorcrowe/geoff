@@ -33,7 +33,7 @@ This document defines the JSON plan structure that the LLM generates and the que
 | `group_by` | array | No | List of column names to group by |
 | `order_by` | array | No | List of order objects |
 | `limit` | integer | No | Maximum number of results |
-| `distinct` | boolean | No | Whether to use SELECT DISTINCT (default: False) |
+| `distinct` | boolean | No | Whether to use SELECT DISTINCT (default: false) |
 
 ### Column Object
 
@@ -116,7 +116,7 @@ This document defines the JSON plan structure that the LLM generates and the que
   "operation": "string",      // ST_DWithin, ST_Intersects, ST_Contains, ST_Within
   "target_table": "string",   // Table to filter against
   "distance": "number",       // Distance in meters (for ST_DWithin)
-  "use_exists": "boolean"     // Use EXISTS subquery (default: True, more efficient)
+  "use_exists": "boolean"     // Use EXISTS subquery (default: true, more efficient)
 }
 ```
 
@@ -127,14 +127,14 @@ This document defines the JSON plan structure that the LLM generates and the que
   "operation": "ST_DWithin",
   "target_table": "schools",
   "distance": 500,
-  "use_exists": True
+  "use_exists": true
 }
 
 // Intersection filter
 {
   "operation": "ST_Intersects",
   "target_table": "neighbourhoods",
-  "use_exists": True
+  "use_exists": true
 }
 ```
 
@@ -297,7 +297,7 @@ This document defines the JSON plan structure that the LLM generates and the que
       "query": {
         "type": "select",
         "table": "bike_lanes",
-        "distinct": True,
+        "distinct": true,
         "columns": [
           {"name": "street_name"},
           {"name": "lane_type"},
@@ -308,7 +308,7 @@ This document defines the JSON plan structure that the LLM generates and the que
             "operation": "ST_DWithin",
             "target_table": "schools",
             "distance": 500,
-            "use_exists": True
+            "use_exists": true
           }
         ]
       }
@@ -319,7 +319,7 @@ This document defines the JSON plan structure that the LLM generates and the que
       "query": {
         "type": "select",
         "table": "schools",
-        "distinct": True,
+        "distinct": true,
         "columns": [
           {"name": "name"},
           {"name": "school_type_desc"},
@@ -344,7 +344,7 @@ This document defines the JSON plan structure that the LLM generates and the que
         "type": "select",
         "table": "schools",
         "alias": "s",
-        "distinct": True,
+        "distinct": true,
         "columns": [
           {"name": "s.name", "alias": "school_name"},
           {"name": "geometry", "expression": "ST_AsGeoJSON(s.geometry)", "alias": "geometry"},
