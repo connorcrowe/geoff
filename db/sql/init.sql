@@ -27,9 +27,12 @@ ADD CONSTRAINT unique_table_column UNIQUE(table_name, column_name);
 -- Example Queries
 CREATE TABLE IF NOT EXISTS meta.example_embeddings (
     id SERIAL PRIMARY KEY,
-    type TEXT NOT NULL,
-    sources TEXT[] NOT NULL,
     user_query TEXT NOT NULL,
+    tables TEXT[] NOT NULL,
+    components TEXT[] NOT NULL,
     plan JSONB NOT NULL,
-    embedding VECTOR(1536)
+    embedding vector(1536), 
+    embedding_version INT NOT NULL DEFAULT 1,
+    last_embedded TIMESTAMP,
+    file_hash TEXT  -- stores hash of the JSON file for change detection
 );
