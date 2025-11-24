@@ -54,7 +54,7 @@ def ingest_one(dataset_name):
     dfs, table_name, source_url = module.fetch()
 
     if isinstance(dfs, dict): multi_table_ingest(dataset_name, dfs, table_name, source_url)
-    else: single_table_ingest(dataset_name, df, table_name, source_url)
+    else: single_table_ingest(dataset_name, dfs, table_name, source_url)
 
 def ingest_all():
     for module in get_dataset_modules():

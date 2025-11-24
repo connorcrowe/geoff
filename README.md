@@ -8,7 +8,7 @@ Ask a question, get a map. A natural language interface for querying geospatial 
 ![](images/recordings/geoff-09-05-small.gif)
 
 ---
-> 📘 **Latest: Version 0.3.0 - Query Builder Enhancement**
+> 📘 **Latest: Version 0.3.1 - Query Builder Enhancement**
 >
 > **Recent Changes:**
 > - **Aggregations & Analytics**: Full GROUP BY support with all major aggregation functions (COUNT, SUM, AVG, MIN, MAX, STDDEV)
