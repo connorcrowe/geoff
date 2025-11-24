@@ -41,9 +41,16 @@ A list of layer objects, where each layer contains:
 
 ### Spatial Filter
 - Supported operations: `ST_DWithin`, `ST_Intersects`, `ST_Contains`, `ST_Within`
+- Supports optional `target_filters` array to filter the target table within the EXISTS subquery
 - Filter by spatial feature (also show context layer):
     - "Show bike lanes within 500m of schools"
         - ```["""SELECT DISTINCT bike_lanes.street_name, bike_lanes.lane_type, ST_AsGeoJSON(bike_lanes.geometry) AS geometry FROM bike_lanes WHERE EXISTS (SELECT 1 FROM schools WHERE ST_DWITHIN(bike_lanes.geometry::geography, schools.geometry::geography, 500));""", """SELECT DISTINCT schools.name, schools.school_type_desc, ST_AsGeoJSON(schools.geometry) AS geometry FROM schools;"""] ```
+- Filter by spatial feature with target table filtering:
+    - "Show bike lanes within 500m of private schools"
+        - ```["""SELECT DISTINCT bike_lanes.street_name, bike_lanes.lane_type, ST_AsGeoJSON(bike_lanes.geometry) AS geometry FROM bike_lanes WHERE EXISTS (SELECT 1 FROM schools WHERE ST_DWITHIN(bike_lanes.geometry::geography, schools.geometry::geography, 500) AND school_type = 'PR');""", """SELECT DISTINCT schools.name, schools.school_type_desc, ST_AsGeoJSON(schools.geometry) AS geometry FROM schools WHERE school_type = 'PR';"""] ```
+- Filter by spatial feature with multiple target conditions:
+    - "Show building outlines in neighbourhoods with names like '%north%' and areas larger than 1 million m²"
+        - ```["""SELECT building_outlines.id, building_outlines.subtype_desc, ST_AsGeoJSON(building_outlines.geometry) AS geometry FROM building_outlines WHERE EXISTS (SELECT 1 FROM neighbourhoods WHERE ST_Intersects(building_outlines.geometry, neighbourhoods.geometry) AND area_name ILIKE '%north%' AND area_m2 > 1000000);"""]```
 
 ### Spatial Join
 - Supported operations: `ST_DWithin`, `ST_Intersects`, `ST_Contains`, `ST_Within`

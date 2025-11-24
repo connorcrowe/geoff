@@ -30,9 +30,9 @@ def parse_results(queries):
         
         for row in rows:
             geom = None
-            if geom_col and row.get(geom_col): 
+            if geom_col and row.get(geom_col):
                 geom = json.loads(row[geom_col])
-            #geom = json.loads(row[geom_col]) 
+            #geom = json.loads(row[geom_col])
             props = {k: v for k,v in row.items() if k != geom_col}
 
             if geom:

@@ -51,6 +51,21 @@ Bike lane segments, including installation year, street info, and geometry.
 | converted       | text      | Year the bike lane was converted                    |
 | geometry        | geometry  | Geometry: line segment of the bike lane             |
 
+### building_outlines
+Building footprints and outlines, including building type, height, and elevation data.
+
+Column Name           | Data Type | Description                                                                  |
+|-----------------------|-----------|------------------------------------------------------------------------------|
+id                    | integer   | Unique identifier                                                            |
+subtype_desc          | text      | Text description of outline subtype: "Miscellaneous Structure", "Building Outline", or "Garage" |
+subtype_code          | integer   | Short code categorizing outline subtype                                      |
+elevation             | integer   | Ground elevation of the feature (meters)                                     |
+derived_height        | integer   | Height of the feature derived from LiDAR data (meters)                       |
+objectid              | integer   | Unique object ID of the feature                                              |
+last_attribute_maint  | text      | Date of the last attribute edit                                              |
+last_geometry_maint   | text      | Date of last geometry edit                                                   |
+geometry              | geometry  | Geometry: polygon location of the building                                   |
+
 ### fire_stations
 Fire stations, including address, municipality, station number, and location.
 
@@ -118,6 +133,18 @@ Schools, including name, type, board, address, and location.
 | address           | text      | Street address                              |
 | geometry          | geometry  | Geometry: point location of the school      |
 
+### transit_stops
+Transit stop locations from GTFS data, including accessibility information.
+
+Column Name         | Data Type | Description                                         |
+|---------------------|-----------|-----------------------------------------------------|
+id                  | integer   | Unique identifier (stop_id from GTFS)               |
+name                | text      | Name of the transit stop                            |
+description         | integer   | Description code of the stop                        |
+wheelchair_boarding | integer   | Whether there is accessible boarding at the stop (0=unknown, 1=accessible, 2=not accessible) |
+location_type       | integer   | Location type of the stop (0=stop, 1=station)       |
+geometry            | geometry  | Geometry: point location of the stop                |
+
 ### wards
 Ward boundaries and identifiers.
 
@@ -127,3 +154,16 @@ Ward boundaries and identifiers.
 | name          | text      | Name of the ward                            |
 | ward_id       | integer   | Ward ID for linking to other tables         |
 | geometry      | geometry  | Geometry: polygon boundary of the ward      |
+
+### zoning
+Zoning designations and regulations, including zone types, dwelling unit limits, and exceptions.
+
+Column Name       | Data Type | Description                                                                                                                                                                                                                                                                                                            |
+|-------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+id                | integer   | Unique identifier                                                                                                                                                                                                                                                                                                      |
+zone              | text      | Name of the zone. R: Residential, RD: Residential Detached, RS: Residential Semi-Detached, RM: Residential Multiple, RA: Residential Apartment, RAC: Residential Apartment Commercial, O: Open Space, ON: Open Space Natural, OR: Open Space Recreation, UT: Utility & Transport, CL: Commercial Local, CR: Commercial Residential, CRE: Commercial Residential Employment, EL: Employment Light Industrial, E: Employment Industrial, EH: Employment Heavy Industrial, EO: Employment Office, I: Institutional, IH: Institutional Hospital, IE: Institutional Education, IS: Institutional School |
+zone_code         | integer   | Numeric code for zone category. 0=Residential, 1=Open Space, 2=Utility and Transportation, 4=Employment Industrial, 5=Institutional, 6=Commercial Residential Employment, 101=Residential Apartment, 201=Commercial, 202=Commercial Residential |
+max_units         | integer   | The permitted maximum number of dwelling units allowed on a lot in the zone. -1 indicates no specific limit                                                                                                                                                                                                           |
+full_zone_string  | text      | Complete label of the zone including all modifiers                                                                                                                                                                                                                                                                     |
+zoning_exception  | text      | Indicates whether a zone has an exception (Y=Yes, N=No, NULL=unknown)                                                                                                                                                                                                                                                 |
+geometry          | geometry  | Geometry: polygon location of the zone                                                                                                                                                                                                                                                                                 |

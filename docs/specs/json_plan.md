@@ -116,7 +116,8 @@ This document defines the JSON plan structure that the LLM generates and the que
   "operation": "string",      // ST_DWithin, ST_Intersects, ST_Contains, ST_Within
   "target_table": "string",   // Table to filter against
   "distance": "number",       // Distance in meters (for ST_DWithin)
-  "use_exists": "boolean"     // Use EXISTS subquery (default: true, more efficient)
+  "use_exists": "boolean",    // Use EXISTS subquery (default: true, more efficient)
+  "target_filters": "array"   // Optional: Array of filter objects to apply to target table
 }
 ```
 
@@ -136,7 +137,31 @@ This document defines the JSON plan structure that the LLM generates and the que
   "target_table": "neighbourhoods",
   "use_exists": true
 }
+
+// Spatial filter with target table filtering (single condition)
+{
+  "operation": "ST_DWithin",
+  "target_table": "schools",
+  "distance": 500,
+  "use_exists": true,
+  "target_filters": [
+    {"column": "school_type", "operator": "=", "value": "PR"}
+  ]
+}
+
+// Spatial filter with multiple target table conditions
+{
+  "operation": "ST_Intersects",
+  "target_table": "neighbourhoods",
+  "use_exists": true,
+  "target_filters": [
+    {"column": "area_name", "operator": "ILIKE", "value": "%north%"},
+    {"column": "area_m2", "operator": ">", "value": 1000000, "logic": "AND"}
+  ]
+}
 ```
+
+**Note:** The `target_filters` field allows filtering the target table within the spatial EXISTS subquery. This is more efficient than using a JOIN when you only need to filter the primary table based on spatial relationships with filtered target records. Each filter object in the array follows the same structure as regular filter objects (see Filter Object section).
 
 ### Join Object
 

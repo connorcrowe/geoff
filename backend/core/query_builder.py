@@ -252,16 +252,32 @@ def _build_spatial_filters(query: Dict) -> List[str]:
     """
     Build spatial filter clauses using EXISTS subqueries.
     
+    Supports optional filtering of the target table using target_filters array.
+    
     Example:
         {
             "operation": "ST_DWithin",
             "target_table": "schools",
             "distance": 500,
-            "use_exists": true
+            "use_exists": true,
+            "target_filters": [
+                {"column": "school_type", "operator": "=", "value": "PR"}
+            ]
+        }
+    
+    Example with multiple filters:
+        {
+            "operation": "ST_Intersects",
+            "target_table": "neighbourhoods",
+            "use_exists": true,
+            "target_filters": [
+                {"column": "area_name", "operator": "ILIKE", "value": "%north%"},
+                {"column": "area_m2", "operator": ">", "value": 1000000, "logic": "AND"}
+            ]
         }
     
     Returns:
-        ["EXISTS (SELECT 1 FROM schools WHERE ST_DWithin(...))"]
+        ["EXISTS (SELECT 1 FROM schools WHERE ST_DWithin(...) AND school_type = 'PR')"]
     """
     spatial_filters = query.get("spatial_filters", [])
     table = query.get("table")
@@ -288,9 +304,26 @@ def _build_spatial_filters(query: Dict) -> List[str]:
         else:
             raise ValueError(f"Unknown spatial operation: {operation}")
         
+        # Build additional filters for target table if provided
+        target_filter_clause = ""
+        
+        # Support both target_filters (new array format) and target_filter (legacy single object)
+        target_filters_list = []
+        if "target_filters" in sf:
+            target_filters_list = sf["target_filters"]
+        elif "target_filter" in sf:
+            # Backward compatibility with single target_filter
+            target_filters_list = [sf["target_filter"]]
+        
+        if target_filters_list:
+            # Build WHERE clause for target filters
+            target_where = _build_where_clause(target_filters_list)
+            if target_where:
+                target_filter_clause = f" AND {target_where}"
+        
         # Wrap in EXISTS subquery if requested
         if use_exists:
-            clause = f"EXISTS (SELECT 1 FROM {target_table} WHERE {spatial_condition})"
+            clause = f"EXISTS (SELECT 1 FROM {target_table} WHERE {spatial_condition}{target_filter_clause})"
         else:
             clause = spatial_condition
         
