@@ -43,3 +43,7 @@ System by which ambiguous place names are resolved. A user can specify any of th
 - University of Toronto campus
 - "University" neighbourhood
 - "University-Rosedale" ward
+
+### Frontend QOL
+- Ctl + Enter submits form
+- Paginate results, load only that pages geometry at a time to improve loading of large geometry sets

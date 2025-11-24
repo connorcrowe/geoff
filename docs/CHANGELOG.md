@@ -8,6 +8,25 @@ As per [Semantic Versioning](https://semver.org/spec/v2.0.0.html) Geoff is an in
 
 - 
 
+## [2025-11-24] - 0.3.1 - Spatial Filter Fix, Add Building, Zoning and Transit Stop datasets
+
+### Added
+- `target_filters` support in spatial filter objects - allows filtering the target table within spatial EXISTS subqueries
+  - Supports array of filter conditions to apply to the target table
+  - More efficient than JOINs for filtering without needing target table columns
+- Building outlines dataset added to ETL pipeline
+- Transit stops dataset added to ETL pipeline (from GTFS data)
+- Zoning dataset added to ETL pipeline with zone types, unit limits, and exceptions
+- Added 21 new example queries (044-064) demonstrating building outlines, transit stops, and zoning datasets usage
+
+### Changed
+- Enhanced spatial filter functionality in query builder to support complex target table filtering
+- Updated example 003.json to use new `target_filters` array format
+
+### Documentation
+- Updated [`docs/specs/json_plan.md`](docs/specs/json_plan.md) with `target_filters` specification
+- Updated [`docs/specs/query_builder.md`](docs/specs/query_builder.md) with spatial filter examples using target filters
+
 ## [2025-11-21] - 0.3.0 - Query Builder Enhancement
 
 ### Added
