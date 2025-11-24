@@ -36,18 +36,29 @@ def write_staging_with_meta(df, table_name, source_url):
         )
         print(f"[ETL|{table_name}] Written to staging and metadata updated ({len(df)} records)")
 
+def single_table_ingest(dataset_name, df, table_name, source_url):
+    write_staging_with_meta(df, table_name, source_url)
+
+def multi_table_ingest(dataset_name, dfs, table_prefix, source_url):
+    for name, df in dfs.items():
+        cleaned = name.replace(".txt", "").lower()
+        full_name = f"{table_prefix}_{cleaned}"
+        print(f"- [ETL]: Ingesting sub table {full_name}")
+        write_staging_with_meta(df, full_name, source_url)
+
+
 # INGEST
 def ingest_one(dataset_name):
-    print(f"[ETL]: Ingesting just {dataset_name}...")
+    print(f"[ETL]: Ingesting {dataset_name}...")
     module = importlib.import_module(f"datasets.{dataset_name}")
-    df, table_name, source_url = module.fetch()
-    write_staging_with_meta(df, table_name, source_url)
+    dfs, table_name, source_url = module.fetch()
+
+    if isinstance(dfs, dict): multi_table_ingest(dataset_name, dfs, table_name, source_url)
+    else: single_table_ingest(dataset_name, df, table_name, source_url)
 
 def ingest_all():
     for module in get_dataset_modules():
-        print(f"[ETL]: Starting ingest of {module.__name__} ...")
-        df, table_name, source_url = module.fetch()
-        write_staging_with_meta(df, table_name, source_url)
+        ingest_one(module)
 
 # LOAD
 def load_one(dataset_name):
