@@ -1,0 +1,51 @@
+{
+    "id": 61,
+    "user_query": "Show schools within 400m of transit stops",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["schools", "transit_stops"],
+        "components": ["simple_select", "spatial_filter", "context_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "schools_near_transit",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "schools",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "school_type_desc"},
+                        {"name": "address"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "spatial_filters": [
+                        {
+                            "operation": "ST_DWithin",
+                            "target_table": "transit_stops",
+                            "distance": 400,
+                            "use_exists": true
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "transit_stops",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "transit_stops",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

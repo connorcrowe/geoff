@@ -1,0 +1,35 @@
+{
+    "id": 50,
+    "user_query": "Show all commercial zones (CL, CR, CRE)",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "commercial_zones",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "max_units"},
+                        {"name": "full_zone_string"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
+                    ]
+                }
+            }
+        ]
+    }
+}

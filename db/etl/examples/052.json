@@ -1,0 +1,35 @@
+{
+    "id": 52,
+    "user_query": "Show all apartment zones (RA, RAC)",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "apartment_zones",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "max_units"},
+                        {"name": "full_zone_string"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "zone", "operator": "IN", "value": ["RA", "RAC"]}
+                    ]
+                }
+            }
+        ]
+    }
+}

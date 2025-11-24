@@ -1,56 +1,49 @@
 {
-    "id": 3,
-    "user_query": "Show all bike lanes within 500 meters of private schools",
+    "id": 56,
+    "user_query": "Show buildings within 200m of schools",
     "embedding_version": 0,
     "last_embedded": "",
     
     "metadata": {
-        "tables": ["bike_lanes", "schools"],
-        "components": ["simple_select", "spatial_filter", "filter", "context_layer"]
+        "tables": ["building_outlines", "schools"],
+        "components": ["simple_select", "spatial_filter", "context_layer"]
     },
     
     "plan": {
         "layers": [
             {
-                "layer_name": "bike_lanes_near_private_schools",
+                "layer_name": "buildings_near_schools",
                 "layer_type": "primary",
                 "query": {
                     "type": "select",
-                    "table": "bike_lanes",
+                    "table": "building_outlines",
                     "distinct": true,
                     "columns": [
-                        {"name": "street_name"},
-                        {"name": "lane_type"},
-                        {"name": "installed_year"},
+                        {"name": "id"},
+                        {"name": "subtype_desc"},
+                        {"name": "derived_height"},
                         {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
                             "operation": "ST_DWithin",
                             "target_table": "schools",
-                            "distance": 500,
-                            "use_exists": true,
-                            "target_filters": [
-                                {"column": "school_type", "operator": "=", "value": "PR"}
-                            ]
+                            "distance": 200,
+                            "use_exists": true
                         }
                     ]
                 }
             },
             {
-                "layer_name": "private_schools",
+                "layer_name": "schools",
                 "layer_type": "context",
                 "query": {
                     "type": "select",
                     "table": "schools",
                     "columns": [
                         {"name": "name"},
-                        {"name": "school_type_desc"},
                         {"name": "address"},
                         {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
-                    ],
-                    "filters": [
-                        {"column": "school_type", "operator": "=", "value": "PR"}
                     ]
                 }
             }

@@ -1,0 +1,34 @@
+{
+    "id": 47,
+    "user_query": "Show buildings taller than 50 meters",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["building_outlines"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "buildings_over_50m",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "building_outlines",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "subtype_desc"},
+                        {"name": "derived_height"},
+                        {"name": "elevation"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "derived_height", "operator": ">", "value": 50}
+                    ]
+                }
+            }
+        ]
+    }
+}

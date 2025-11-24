@@ -1,0 +1,34 @@
+{
+    "id": 48,
+    "user_query": "Show transit stops by name containing \"Station\"",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["transit_stops"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "transit_stops_with_station",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "transit_stops",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "name"},
+                        {"name": "description"},
+                        {"name": "wheelchair_boarding"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "name", "operator": "ILIKE", "value": "%Station%"}
+                    ]
+                }
+            }
+        ]
+    }
+}

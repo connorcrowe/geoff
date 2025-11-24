@@ -1,0 +1,59 @@
+{
+    "id": 60,
+    "user_query": "Show transit stops in each neighbourhood (count per neighbourhood)",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["transit_stops", "neighbourhoods"],
+        "components": ["aggregation", "spatial_join", "group_by", "reference_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_transit_stop_count",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "neighbourhoods",
+                    "alias": "n",
+                    "columns": [
+                        {"name": "n.id", "alias": "neighbourhood_id"},
+                        {"name": "n.area_name"},
+                        {
+                            "name": "transit_stop_count",
+                            "aggregate": "count",
+                            "expression": "ts.id"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "LEFT",
+                            "table": "transit_stops",
+                            "alias": "ts",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["n.id", "n.area_name", "n.geometry"]
+                }
+            },
+            {
+                "layer_name": "transit_stops",
+                "layer_type": "reference",
+                "query": {
+                    "type": "select",
+                    "table": "transit_stops",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "id": 55,
+    "user_query": "Show the largest zone by area",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning"],
+        "components": ["simple_select", "spatial_column", "order_by", "limit"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "largest_zone",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "max_units"},
+                        {"name": "full_zone_string"},
+                        {
+                            "name": "area_m2",
+                            "expression": "to_char(ST_Area(geometry::geography), 'FM999,999,999.99')",
+                            "alias": "area_m2"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "order_by": [
+                        {
+                            "expression": "ST_Area(geometry::geography)",
+                            "direction": "DESC"
+                        }
+                    ],
+                    "limit": 1
+                }
+            }
+        ]
+    }
+}

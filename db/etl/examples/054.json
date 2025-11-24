@@ -1,0 +1,36 @@
+{
+    "id": 54,
+    "user_query": "Show zones allowing more than 10 units",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "zones_over_10_units",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "max_units"},
+                        {"name": "full_zone_string"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "max_units", "operator": ">", "value": 10},
+                        {"column": "max_units", "operator": "!=", "value": -1, "logic": "AND"}
+                    ]
+                }
+            }
+        ]
+    }
+}

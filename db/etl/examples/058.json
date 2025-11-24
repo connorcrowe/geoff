@@ -1,56 +1,54 @@
 {
-    "id": 3,
-    "user_query": "Show all bike lanes within 500 meters of private schools",
+    "id": 58,
+    "user_query": "Show transit stops in commercial zones",
     "embedding_version": 0,
     "last_embedded": "",
     
     "metadata": {
-        "tables": ["bike_lanes", "schools"],
+        "tables": ["transit_stops", "zoning"],
         "components": ["simple_select", "spatial_filter", "filter", "context_layer"]
     },
     
     "plan": {
         "layers": [
             {
-                "layer_name": "bike_lanes_near_private_schools",
+                "layer_name": "transit_stops_in_commercial_zones",
                 "layer_type": "primary",
                 "query": {
                     "type": "select",
-                    "table": "bike_lanes",
+                    "table": "transit_stops",
                     "distinct": true,
                     "columns": [
-                        {"name": "street_name"},
-                        {"name": "lane_type"},
-                        {"name": "installed_year"},
+                        {"name": "id"},
+                        {"name": "name"},
+                        {"name": "wheelchair_boarding"},
                         {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
-                            "operation": "ST_DWithin",
-                            "target_table": "schools",
-                            "distance": 500,
+                            "operation": "ST_Within",
+                            "target_table": "zoning",
                             "use_exists": true,
                             "target_filters": [
-                                {"column": "school_type", "operator": "=", "value": "PR"}
+                                {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
                             ]
                         }
                     ]
                 }
             },
             {
-                "layer_name": "private_schools",
+                "layer_name": "commercial_zones",
                 "layer_type": "context",
                 "query": {
                     "type": "select",
-                    "table": "schools",
+                    "table": "zoning",
                     "columns": [
-                        {"name": "name"},
-                        {"name": "school_type_desc"},
-                        {"name": "address"},
+                        {"name": "zone"},
+                        {"name": "full_zone_string"},
                         {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
                     ],
                     "filters": [
-                        {"column": "school_type", "operator": "=", "value": "PR"}
+                        {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
                     ]
                 }
             }

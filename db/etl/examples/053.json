@@ -1,0 +1,36 @@
+{
+    "id": 53,
+    "user_query": "Show zones with no exceptions",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning"],
+        "components": ["simple_select", "filter"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "zones_without_exceptions",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "max_units"},
+                        {"name": "full_zone_string"},
+                        {"name": "zoning_exception"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "zoning_exception", "operator": "IS NULL"}
+                    ]
+                }
+            }
+        ]
+    }
+}

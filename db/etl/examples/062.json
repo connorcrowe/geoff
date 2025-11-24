@@ -1,0 +1,55 @@
+{
+    "id": 62,
+    "user_query": "Show commercial zones along bike lanes",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["zoning", "bike_lanes"],
+        "components": ["simple_select", "spatial_filter", "filter", "context_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "commercial_zones_along_bike_lanes",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "zone"},
+                        {"name": "zone_code"},
+                        {"name": "full_zone_string"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
+                    ],
+                    "spatial_filters": [
+                        {
+                            "operation": "ST_Intersects",
+                            "target_table": "bike_lanes",
+                            "use_exists": true
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "bike_lanes",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "bike_lanes",
+                    "columns": [
+                        {"name": "street_name"},
+                        {"name": "lane_type"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

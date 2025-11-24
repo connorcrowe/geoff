@@ -1,0 +1,77 @@
+{
+    "id": 63,
+    "user_query": "Show tall buildings (>30m) in commercial zones near transit stops (<400m)",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["building_outlines", "zoning", "transit_stops"],
+        "components": ["simple_select", "spatial_filter", "filter", "context_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "tall_buildings_commercial_near_transit",
+                "layer_type": "primary",
+                "query": {
+                    "type": "select",
+                    "table": "building_outlines",
+                    "distinct": true,
+                    "columns": [
+                        {"name": "id"},
+                        {"name": "subtype_desc"},
+                        {"name": "derived_height"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "derived_height", "operator": ">", "value": 30}
+                    ],
+                    "spatial_filters": [
+                        {
+                            "operation": "ST_Within",
+                            "target_table": "zoning",
+                            "use_exists": true,
+                            "target_filters": [
+                                {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
+                            ]
+                        },
+                        {
+                            "operation": "ST_DWithin",
+                            "target_table": "transit_stops",
+                            "distance": 400,
+                            "use_exists": true
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "commercial_zones",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "zoning",
+                    "columns": [
+                        {"name": "zone"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ],
+                    "filters": [
+                        {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
+                    ]
+                }
+            },
+            {
+                "layer_name": "transit_stops",
+                "layer_type": "context",
+                "query": {
+                    "type": "select",
+                    "table": "transit_stops",
+                    "columns": [
+                        {"name": "name"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}

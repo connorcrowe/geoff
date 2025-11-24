@@ -1,0 +1,75 @@
+{
+    "id": 64,
+    "user_query": "Show the densest area (most buildings per square km in each neighbourhood)",
+    "embedding_version": 0,
+    "last_embedded": "",
+    
+    "metadata": {
+        "tables": ["building_outlines", "neighbourhoods"],
+        "components": ["aggregation", "spatial_join", "spatial_column", "group_by", "order_by", "reference_layer"]
+    },
+    
+    "plan": {
+        "layers": [
+            {
+                "layer_name": "neighbourhoods_building_density",
+                "layer_type": "primary",
+                "query": {
+                    "type": "aggregate",
+                    "table": "neighbourhoods",
+                    "alias": "n",
+                    "columns": [
+                        {"name": "n.id", "alias": "neighbourhood_id"},
+                        {"name": "n.area_name"},
+                        {
+                            "name": "building_count",
+                            "aggregate": "count",
+                            "expression": "b.id"
+                        },
+                        {
+                            "name": "area_km2",
+                            "expression": "ST_Area(n.geometry::geography) / 1000000",
+                            "alias": "area_km2"
+                        },
+                        {
+                            "name": "building_density_per_km2",
+                            "expression": "COUNT(b.id) / NULLIF(ST_Area(n.geometry::geography) / 1000000, 0)",
+                            "alias": "building_density_per_km2"
+                        },
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                    ],
+                    "joins": [
+                        {
+                            "type": "LEFT",
+                            "table": "building_outlines",
+                            "alias": "b",
+                            "condition": {
+                                "type": "spatial",
+                                "operation": "ST_Intersects"
+                            }
+                        }
+                    ],
+                    "group_by": ["n.id", "n.area_name", "n.geometry"],
+                    "order_by": [
+                        {
+                            "expression": "COUNT(b.id) / NULLIF(ST_Area(n.geometry::geography) / 1000000, 0)",
+                            "direction": "DESC"
+                        }
+                    ]
+                }
+            },
+            {
+                "layer_name": "building_outlines",
+                "layer_type": "reference",
+                "query": {
+                    "type": "select",
+                    "table": "building_outlines",
+                    "columns": [
+                        {"name": "subtype_desc"},
+                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                    ]
+                }
+            }
+        ]
+    }
+}
