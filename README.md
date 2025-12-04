@@ -5,7 +5,7 @@ Ask a question, get a map. A natural language interface for querying geospatial 
 **[🌐 Try Geoff Here! 🌎](https://geoff.connorcrowe.ca)**
 ---
 
-![](images/recordings/geoff-09-05-small.gif)
+![](docs/images/recordings/geoff-09-05-small.gif)
 
 ---
 > 📘 **Latest: Version 0.3.1 - Query Builder Enhancement**
@@ -42,8 +42,8 @@ Geoff takes a prompt in natural language, converts it into a spatial SQL query, 
 
 |   |   |
 | - | - |
-| Dynamic data dictionary   | ![](images/screenshots/example-datadict.png) | 
-| Explorable results        | ![](images/screenshots/example-query02.png) |
+| Dynamic data dictionary   | ![](docs/images/screenshots/example-datadict.png) | 
+| Explorable results        | ![](docs/images/screenshots/example-query02.png) |
 
 **Note:** Geoff can only answer questions using data from its current datasets. Query capabilities are expanding with each release.
 
