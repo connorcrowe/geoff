@@ -32,3 +32,6 @@ dist-ssr
 
 # Old files
 attic/
+
+# Support
+/docs/images/ignore
