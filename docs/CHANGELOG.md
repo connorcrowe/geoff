@@ -6,7 +6,8 @@ As per [Semantic Versioning](https://semver.org/spec/v2.0.0.html) Geoff is an in
 
 ## [Unreleased]
 
-- 
+- Fix error preventing `ingest_all_datasets` from working the ETL
+- Refactor loading in ETL
 
 ## [2025-11-24] - 0.3.1 - Spatial Filter Fix, Add Building, Zoning and Transit Stop datasets
 

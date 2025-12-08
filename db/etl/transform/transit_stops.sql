@@ -8,7 +8,7 @@ SELECT
 
     CAST(stop_id AS integer) AS id,
     NULLIF(stop_name, '')::text AS name,
-    CAST(stop_desc AS integer) AS description,
+    NULLIF(stop_desc, '')::text AS description,
     CAST(wheelchair_boarding AS integer) AS wheelchair_boarding,
     CAST(location_type AS integer) AS location_type,
     ST_SetSRID(ST_Point(stop_lon, stop_lat), 4326) AS geometry

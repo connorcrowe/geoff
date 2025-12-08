@@ -25,4 +25,4 @@ COMMENT ON COLUMN data.zoning.zone_code IS 'Zoned destination of the zone limite
 COMMENT ON COLUMN data.zoning.max_units IS '	The permitted maximum number of Dwelling Units allowed on a lot in the zone, and is a numeric value prefaced by the letter u in a residential zone.';
 COMMENT ON COLUMN data.zoning.full_zone_string IS 'Complete label of the zone.';
 COMMENT ON COLUMN data.zoning.zoning_exception IS 'This indicates whether a zone has an Exception. Yes (Y) or No (N)';
-COMMENT ON COLUMN data.attractions.geometry IS 'Geometry: polygon location of the zone';
+COMMENT ON COLUMN data.zoning.geometry IS 'Geometry: polygon location of the zone';
