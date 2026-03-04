@@ -24,7 +24,7 @@
                         {"name": "ems_id"},
                         {"name": "ems_name"},
                         {"name": "ems_website"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

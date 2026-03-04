@@ -29,7 +29,6 @@
                         },
                         {
                             "name": "geometry",
-                            "expression": "ST_AsGeoJSON(geometry)",
                             "alias": "geometry"
                         }
                     ],

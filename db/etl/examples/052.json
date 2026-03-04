@@ -23,7 +23,7 @@
                         {"name": "zone_code"},
                         {"name": "max_units"},
                         {"name": "full_zone_string"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "zone", "operator": "IN", "value": ["RA", "RAC"]}

@@ -22,7 +22,7 @@
                         {"name": "id"},
                         {"name": "subtype_desc"},
                         {"name": "derived_height"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
@@ -45,7 +45,7 @@
                     "columns": [
                         {"name": "area_name"},
                         {"name": "classification"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "area_name", "operator": "=", "value": "Downtown Yonge East"}

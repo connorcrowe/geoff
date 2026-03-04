@@ -24,7 +24,7 @@
                         {"name": "a.address"},
                         {"name": "w.name", "alias": "ward_name"},
                         {"name": "w.ward_id"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(a.geometry)", "alias": "geometry"}
+                        {"name": "w.geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "a.name", "operator": "ILIKE", "value": "%Allan Gardens%"}
@@ -54,7 +54,7 @@
                     "columns": [
                         {"name": "w.name"},
                         {"name": "w.ward_id"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(w.geometry)", "alias": "geometry"}
+                        {"name": "w.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {

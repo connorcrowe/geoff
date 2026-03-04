@@ -66,8 +66,7 @@
                                 "name": "pc.park_count"
                             },
                             {
-                                "name": "geometry",
-                                "expression": "ST_AsGeoJSON(pc.geometry)",
+                                "name": "pc.geometry",
                                 "alias": "geometry"
                             }
                         ],

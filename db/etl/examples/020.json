@@ -19,7 +19,7 @@
                     "table": "parking_lots",
                     "columns": [
                         {"name": "id"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

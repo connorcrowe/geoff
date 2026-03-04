@@ -22,7 +22,7 @@
                         {"name": "street_name"},
                         {"name": "lane_type"},
                         {"name": "installed_year"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
@@ -47,7 +47,7 @@
                         {"name": "name"},
                         {"name": "school_type_desc"},
                         {"name": "address"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "school_type", "operator": "=", "value": "PR"}

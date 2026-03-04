@@ -56,7 +56,7 @@
                             {"name": "fsc.ward_id"},
                             {"name": "fsc.name", "alias": "ward_name"},
                             {"name": "fsc.fire_station_count"},
-                            {"name": "geometry", "expression": "ST_AsGeoJSON(fsc.geometry)", "alias": "geometry"}
+                            {"name": "fsc.geometry", "alias": "geometry"}
                         ],
                         "filters": [
                             {"column": "fire_station_count", "operator": ">", "value": 3}

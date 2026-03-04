@@ -36,8 +36,7 @@
                                     "expression": "CAST(fs.station_no AS text)"
                                 },
                                 {
-                                    "name": "geometry",
-                                    "expression": "ST_AsGeoJSON(fs.geometry)",
+                                    "name": "fs.geometry",
                                     "alias": "geometry"
                                 }
                             ]
@@ -60,8 +59,7 @@
                                     "expression": "ps.name"
                                 },
                                 {
-                                    "name": "geometry",
-                                    "expression": "ST_AsGeoJSON(ps.geometry)",
+                                    "name": "ps.geometry",
                                     "alias": "geometry"
                                 }
                             ]
@@ -84,8 +82,7 @@
                                     "expression": "ems.ems_name"
                                 },
                                 {
-                                    "name": "geometry",
-                                    "expression": "ST_AsGeoJSON(ems.geometry)",
+                                    "name": "ems.geometry",
                                     "alias": "geometry"
                                 }
                             ]

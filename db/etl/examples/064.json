@@ -36,7 +36,7 @@
                             "expression": "COUNT(b.id) / NULLIF(ST_Area(n.geometry::geography) / 1000000, 0)",
                             "alias": "building_density_per_km2"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                        {"name": "n.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {
@@ -66,7 +66,7 @@
                     "table": "building_outlines",
                     "columns": [
                         {"name": "subtype_desc"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

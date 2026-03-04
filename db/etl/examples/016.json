@@ -27,7 +27,7 @@
                             "expression": "to_char(ST_Length(geometry::geography), 'FM999,999,999.99')",
                             "alias": "length_m"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

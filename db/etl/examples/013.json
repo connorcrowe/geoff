@@ -21,7 +21,7 @@
                         {"name": "name"},
                         {"name": "type"},
                         {"name": "amenities"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "amenities", "operator": "ILIKE", "value": "%dog%"}

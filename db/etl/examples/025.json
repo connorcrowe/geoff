@@ -21,7 +21,7 @@
                     "distinct": true,
                     "columns": [
                         {"name": "s.name", "alias": "school_name"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(s.geometry)", "alias": "geometry"},
+                        {"name": "s.geometry", "alias": "geometry"},
                         {"name": "fs.station_no", "alias": "fire_station_no"},
                         {"name": "fs.address", "alias": "fire_station_address"},
                         {"name": "fs.municipality"}
