@@ -57,7 +57,7 @@ def handle_user_query(user_question: str, retries: int = 2):
     # 8: Turn JSON Plan to SQL
     sql_queries = build_query(plan_raw)
     print("[MAIN] Result: ", sql_queries)
-
+    
     # 9: Execute SQL statements
     layers = parse_results(sql_queries)
     logging.info("[%s] Generated SQL: %s", request_id, sql_queries)
