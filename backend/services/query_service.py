@@ -7,6 +7,7 @@ from utils.embed import embed_text
 from db.vector_db import select_relevant_tables, select_relevant_examples
 from core.parse_results import parse_results
 from core.query_builder import build_query
+from services import layer_store
 
 from core import llm, prompt_builder
 
@@ -20,6 +21,10 @@ def handle_user_query(user_question: str, retries: int = 2):
     start_time = time.time()
     request_id = str(uuid.uuid4())
     logging.info("[%s] User Question: %s", request_id, user_question)
+    
+    # Cleanup expired layers on each new query (lazy cleanup)
+    expired_count = layer_store.cleanup_expired()
+    if expired_count > 0: logging.info("[%s] Cleaned up %d expired layer(s)", request_id, expired_count)
 
     # 1. Embed the input
     question_embedding = embed_text(user_question)
