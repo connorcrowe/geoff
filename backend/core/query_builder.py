@@ -129,11 +129,18 @@ def _build_select_clause(query: Dict) -> str:
         raise ValueError("Query must have 'columns' array")
     
     column_parts = []
+    has_id = False
+    table_alias = query.get("alias", query.get("table", ""))
     
     for col in query["columns"]:
+        # Track if id column is already included
+        if col.get("name") == "id" or col.get("alias") == "id":
+            has_id = True
+        
         # Handle expression-based columns (computed, formatted, geometry)
         if "expression" in col:
             expr = col["expression"]
+            
             # If aggregate function specified, wrap expression
             if "aggregate" in col:
                 agg_func = col["aggregate"].upper()
@@ -166,6 +173,11 @@ def _build_select_clause(query: Dict) -> str:
         
         else:
             raise ValueError(f"Column must have 'name' or 'expression': {col}")
+    
+    # Always include id column if not present (needed for MVT and feature selection)
+    if not has_id and query.get("type") != "aggregate":
+        id_col = f"{table_alias}.id" if table_alias and "." not in "id" else "id"
+        column_parts.insert(0, id_col)
     
     return ", ".join(column_parts)
 

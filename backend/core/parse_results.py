@@ -2,17 +2,18 @@ import json
 import re
 
 from db.db import execute_sql
+from services import layer_store
+from core import mvt_builder
+
 
 def _detect_geom_col(row):
     for k, v in row.items():
-        if isinstance(v, (dict, str)):
-            try:
-                obj = json.loads(v) if isinstance(v, str) else v
-                if isinstance(obj,dict) and "type" in obj and "coordinates" in obj:
-                    return k
-            except Exception:
-                pass
+        # Check for 'geometry' column name
+        if k.lower() == 'geometry':
+            return k
+
     return None
+
 
 def parse_results(queries):
     layers = []
@@ -20,42 +21,37 @@ def parse_results(queries):
     for query in queries:
         print("[Parse] Executing: ", query)
         rows = execute_sql(query)
-        colnames = list(rows[0].keys())
-        #geom_col = "geometry"
-        geom_col = _detect_geom_col(rows[0])
-        prop_cols = [c for c in colnames if c != geom_col]
-
-        features = []
-        table_rows = []
         
+        if not rows:
+            continue
+        
+        colnames = list(rows[0].keys())
+        geom_col = _detect_geom_col(rows[0])
+        
+        # Exclude geometry from attribute columns
+        prop_cols = [c for c in colnames if c != geom_col]
+        
+        # Build table rows (attributes only, no geometry)
+        table_rows = []
         for row in rows:
-            geom = None
-            if geom_col and row.get(geom_col):
-                geom = json.loads(row[geom_col])
-            #geom = json.loads(row[geom_col])
-            props = {k: v for k,v in row.items() if k != geom_col}
-
-            if geom:
-                features.append({
-                    "type": "Feature",
-                    "geometry": geom,
-                    "properties": props
-                })
             table_rows.append([row.get(c) for c in prop_cols])
         
+        # Extract layer name from query
         match = re.search(r"\bfrom\s+([a-zA-Z0-9_\"\.]+)", query, re.IGNORECASE)
         if match:
-            layer_name = match.group(1).replace('"', '')  # strip quotes if present
+            layer_name = match.group(1).replace('"', '')
         else:
             layer_name = f"layer_{len(layers) + 1}"
         
+        # Store the query for MVT tile generation
+        layer_id = layer_store.create_layer(query, layer_name)
+        
         layers.append({
             "name": layer_name,
-            "geojson": {
-                "type": "FeatureCollection",
-                "features": features
-            },
+            "layer_id": layer_id,
+            "tile_url": f"/api/tiles/{layer_id}/{{z}}/{{x}}/{{y}}.pbf",
             "columns": prop_cols,
-            "rows": table_rows    
+            "rows": table_rows
         })
-    return layers 
+    
+    return layers
