@@ -6,8 +6,21 @@ As per [Semantic Versioning](https://semver.org/spec/v2.0.0.html) Geoff is an in
 
 ## [Unreleased]
 
-- Fix error preventing `ingest_all_datasets` from working the ETL
-- Refactor loading in ETL
+## [2026-03-10] - 0.4.0 - Vector Tile Rendering
+
+### Added
+- Map Vector Tile (MVT) support for efficient large dataset rendering
+- Layer store module for caching base queries and generating tile-specific queries
+- MVT builder module to convert SQL queries into tile-based queries
+- New `/mvt` API endpoint for requesting vector tiles by layer and tile coordinates
+
+### Changed
+- Replaced Leaflet with MapLibre GL for native vector tile support
+- Switched base map to OpenFreeMap for MapLibre GL compatibility
+- Query builder now enforces `id` selection for feature identification
+
+### Fixed
+- ETL `ingest_all_datasets` function now works correctly
 
 ## [2025-11-24] - 0.3.1 - Spatial Filter Fix, Add Building, Zoning and Transit Stop datasets
 

@@ -1,5 +1,5 @@
 # Geoff: The GEOspatial Fact Finder
-![Geoff](https://img.shields.io/badge/version-0.3.1-blue)
+![Geoff](https://img.shields.io/badge/version-0.4.0-blue)
 
 Ask a question, get a map. A natural language interface for querying geospatial data.
 
@@ -9,13 +9,11 @@ Ask a question, get a map. A natural language interface for querying geospatial 
 ![](docs/images/recordings/geoff-09-05-small.gif)
 
 ---
-> 📘 **Latest: Version 0.3.1 - Query Builder Enhancement**
+> 📘 **Latest: Version 0.4.0 - Vector Tile Rendering**
 >
 > **Recent Changes:**
-> - **Aggregations & Analytics**: Full GROUP BY support with all major aggregation functions (COUNT, SUM, AVG, MIN, MAX, STDDEV)
-> - **Advanced SQL Features**: CTEs (WITH clauses), subqueries, UNION operations, computed columns, and comprehensive WHERE operators (BETWEEN, IN, IS NULL)
-> - **Spatial Calculations**: ST_Area, ST_Length, ST_Centroid, ST_Perimeter in SELECT clauses
-> - **Sorting & Pagination**: ORDER BY and LIMIT for top-N queries
+> - **Vector Tiles**: Switched to MapLibre GL with MVT support for efficient rendering of large datasets
+> - **Performance**: New layer store and MVT builder modules for on-demand tile generation
 >
 > See the full [CHANGELOG](docs/CHANGELOG.md) for details.
 ---
