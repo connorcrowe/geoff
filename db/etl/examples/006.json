@@ -24,7 +24,7 @@
                         {"name": "p.type", "alias": "park_type"},
                         {"name": "p.amenities"},
                         {"name": "n.area_name", "alias": "neighbourhood_name"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(p.geometry)", "alias": "geometry"}
+                        {"name": "p.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {

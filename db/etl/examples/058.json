@@ -22,7 +22,7 @@
                         {"name": "id"},
                         {"name": "name"},
                         {"name": "wheelchair_boarding"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
@@ -45,7 +45,7 @@
                     "columns": [
                         {"name": "zone"},
                         {"name": "full_zone_string"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}

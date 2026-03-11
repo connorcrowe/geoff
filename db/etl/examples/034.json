@@ -41,7 +41,7 @@
                             "expression": "COUNT(DISTINCT fs.id) + COUNT(DISTINCT ps.id) + COUNT(DISTINCT ems.id)",
                             "alias": "total_emergency_services"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(w.geometry)", "alias": "geometry"}
+                        {"name": "w.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {

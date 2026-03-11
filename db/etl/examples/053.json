@@ -24,7 +24,7 @@
                         {"name": "max_units"},
                         {"name": "full_zone_string"},
                         {"name": "zoning_exception"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "zoning_exception", "operator": "IS NULL"}

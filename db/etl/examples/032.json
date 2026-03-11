@@ -34,7 +34,7 @@
                             "name": "bike_lane_density_ratio",
                             "expression": "COALESCE(SUM(ST_Length(bl.geometry::geography)) / NULLIF(ST_Area(n.geometry::geography), 0), 0)"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                        {"name": "n.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {
@@ -65,7 +65,7 @@
                     "columns": [
                         {"name": "street_name"},
                         {"name": "lane_type"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

@@ -23,7 +23,7 @@
                         {"name": "zone"},
                         {"name": "zone_code"},
                         {"name": "full_zone_string"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
@@ -46,7 +46,7 @@
                     "columns": [
                         {"name": "street_name"},
                         {"name": "lane_type"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

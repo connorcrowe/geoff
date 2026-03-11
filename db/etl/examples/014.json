@@ -23,7 +23,7 @@
                         {"name": "address"},
                         {"name": "phone"},
                         {"name": "website"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "category", "operator": "ILIKE", "value": "%performing arts%"}

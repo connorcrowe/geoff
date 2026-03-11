@@ -25,7 +25,7 @@
                         {"name": "a.address"},
                         {"name": "w.name", "alias": "ward_name"},
                         {"name": "w.ward_id"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(a.geometry)", "alias": "geometry"}
+                        {"name": "a.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {

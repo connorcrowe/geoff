@@ -22,7 +22,7 @@
                         {"name": "area_name"},
                         {"name": "classification"},
                         {"name": "classification_code"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
@@ -42,7 +42,7 @@
                     "columns": [
                         {"name": "name"},
                         {"name": "ward_id"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

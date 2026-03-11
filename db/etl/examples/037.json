@@ -23,7 +23,7 @@
                         {"name": "installed_year"},
                         {"name": "from_street"},
                         {"name": "to_street"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "installed_year", "operator": "BETWEEN", "value": [2015, 2020]}

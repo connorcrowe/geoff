@@ -25,7 +25,7 @@
                             "expression": "to_char(ST_Area(geometry::geography), 'FM999,999,999.99')",
                             "alias": "area_m2"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

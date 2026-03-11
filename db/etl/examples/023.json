@@ -22,7 +22,7 @@
                         {"name": "school_type_desc"},
                         {"name": "school_board_name"},
                         {"name": "address"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

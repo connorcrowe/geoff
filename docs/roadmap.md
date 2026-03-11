@@ -2,10 +2,13 @@
 **Purpose: To outline the priority and functionality of future features**
 
 ## Prioritized Features
-### 1. Layer History
+### 1. Optimize geometry
+Replace straight GeoJSON with MVT
+
+### 2. Layer History
 Show the previous queries results in a "layers" panel on the frontend. Allow simple interaction like toggling visibility, deleting, etc. Use LLM inferred name, allow user rename.
 
-### 2. Synthetic Geometry ("Create")
+### 3. Synthetic Geometry ("Create")
 Geoff currently can only accept DB results to turn into layers with geometry. Add a module that allows for the creation of new geometries
 - Relative to existing geometries:
     - Buffer
@@ -13,7 +16,7 @@ Geoff currently can only accept DB results to turn into layers with geometry. Ad
 - Eventually:
     - Route / path creation
 
-### 3. Previous Layer References
+### 4. Previous Layer References
 Allow the user to explicitly reference previous layer results as an input for a next question. 
 - Ex: 
     - Q1: Show all schools -> A1: Returns geometry layer of schools
@@ -47,3 +50,6 @@ System by which ambiguous place names are resolved. A user can specify any of th
 ### Frontend QOL
 - Ctl + Enter submits form
 - Paginate results, load only that pages geometry at a time to improve loading of large geometry sets
+
+### Transportation Specific Data
+- Data for the mobility / transportation planning use case

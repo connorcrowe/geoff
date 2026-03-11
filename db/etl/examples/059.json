@@ -22,7 +22,7 @@
                         {"name": "id"},
                         {"name": "name"},
                         {"name": "wheelchair_boarding"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "spatial_filters": [
                         {
@@ -43,7 +43,7 @@
                     "columns": [
                         {"name": "name"},
                         {"name": "address"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

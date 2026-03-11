@@ -63,9 +63,9 @@ def _build_select_query(query: Dict) -> str:
     """
     parts = []
     
-    # SELECT clause
+    # SELECT clause (may add id column if missing)
     distinct = "DISTINCT " if query.get("distinct", False) else ""
-    select_clause = _build_select_clause(query)
+    select_clause, added_id_col = _build_select_clause(query)
     parts.append(f"SELECT {distinct}{select_clause}")
     
     # FROM clause
@@ -92,9 +92,9 @@ def _build_select_query(query: Dict) -> str:
     if where_conditions:
         parts.append(f"WHERE {' AND '.join(where_conditions)}")
     
-    # GROUP BY clause
+    # GROUP BY clause (add id column if it was auto-added to SELECT)
     if "group_by" in query and query["group_by"]:
-        group_by_clause = _build_group_by(query["group_by"])
+        group_by_clause = _build_group_by(query["group_by"], added_id_col)
         parts.append(f"GROUP BY {group_by_clause}")
     
     # ORDER BY clause
@@ -109,7 +109,7 @@ def _build_select_query(query: Dict) -> str:
     return " ".join(parts) + ";"
 
 
-def _build_select_clause(query: Dict) -> str:
+def _build_select_clause(query: Dict) -> tuple[str, Optional[str]]:
     """
     Build SELECT clause from columns array.
     
@@ -129,11 +129,29 @@ def _build_select_clause(query: Dict) -> str:
         raise ValueError("Query must have 'columns' array")
     
     column_parts = []
+    has_id = False
+    has_id_source = False
+    id_source_ref = None
+    added_id_col = None
+    table_alias = query.get("alias", query.get("table", ""))
     
     for col in query["columns"]:
+        # Track if id column is already included with the name "id"
+        if col.get("name") == "id" or col.get("alias") == "id":
+            has_id = True
+        
+        # Track if any column references the id field (even if aliased to something else)
+        # This handles cases like {"name": "n.id", "alias": "neighbourhood_id"}
+        col_name = col.get("name", "")
+        if col_name == "id" or col_name.endswith(".id"):
+            has_id_source = True
+            if not has_id:  # Only store if we don't already have an "id" alias
+                id_source_ref = col_name
+        
         # Handle expression-based columns (computed, formatted, geometry)
         if "expression" in col:
             expr = col["expression"]
+            
             # If aggregate function specified, wrap expression
             if "aggregate" in col:
                 agg_func = col["aggregate"].upper()
@@ -167,7 +185,21 @@ def _build_select_clause(query: Dict) -> str:
         else:
             raise ValueError(f"Column must have 'name' or 'expression': {col}")
     
-    return ", ".join(column_parts)
+    # Ensure an 'id' column exists for MVT generation and feature selection
+    if not has_id:
+        if has_id_source and id_source_ref:
+            # We found an id source (like "n.id") but it was aliased to something else
+            # Add it again with alias "id" to ensure MVT compatibility
+            column_parts.insert(0, f"{id_source_ref} AS id")
+            added_id_col = id_source_ref
+        else:
+            # No id column found - add the default id column from the base table
+            # This works for both regular SELECT and AGGREGATE queries
+            id_col = f"{table_alias}.id" if table_alias else "id"
+            column_parts.insert(0, id_col)
+            added_id_col = id_col
+    
+    return ", ".join(column_parts), added_id_col
 
 
 def _build_from_clause(query: Dict) -> str:
@@ -408,7 +440,7 @@ def _build_joins(query: Dict) -> List[str]:
     return join_clauses
 
 
-def _build_group_by(group_by: List[str]) -> str:
+def _build_group_by(group_by: List[str], added_id_col: Optional[str] = None) -> str:
     """
     Build GROUP BY clause from list of column names.
     
@@ -418,7 +450,13 @@ def _build_group_by(group_by: List[str]) -> str:
     if not group_by:
         return ""
     
-    return ", ".join(group_by)
+    group_by_cols = list(group_by)
+    
+    # If we auto-added an id column to SELECT, add it to GROUP BY as well
+    if added_id_col and added_id_col not in group_by_cols:
+        group_by_cols.insert(0, added_id_col)
+    
+    return ", ".join(group_by_cols)
 
 
 def _build_order_by(order_by: List[Dict]) -> str:

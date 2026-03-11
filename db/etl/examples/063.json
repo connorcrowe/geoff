@@ -22,7 +22,7 @@
                         {"name": "id"},
                         {"name": "subtype_desc"},
                         {"name": "derived_height"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "derived_height", "operator": ">", "value": 30}
@@ -53,7 +53,7 @@
                     "table": "zoning",
                     "columns": [
                         {"name": "zone"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "zone", "operator": "IN", "value": ["CL", "CR", "CRE"]}
@@ -68,7 +68,7 @@
                     "table": "transit_stops",
                     "columns": [
                         {"name": "name"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

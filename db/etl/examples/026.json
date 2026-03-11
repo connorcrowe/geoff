@@ -26,7 +26,7 @@
                             "aggregate": "sum",
                             "expression": "ST_Area(pl.geometry::geography)"
                         },
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(n.geometry)", "alias": "geometry"}
+                        {"name": "n.geometry", "alias": "geometry"}
                     ],
                     "joins": [
                         {
@@ -51,7 +51,7 @@
                     "columns": [
                         {"name": "id"},
                         {"name": "last_updated"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

@@ -22,7 +22,7 @@
                         {"name": "subtype_desc"},
                         {"name": "derived_height"},
                         {"name": "elevation"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ],
                     "filters": [
                         {"column": "derived_height", "operator": "IS NOT NULL"},

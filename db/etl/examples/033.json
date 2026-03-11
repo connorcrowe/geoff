@@ -22,7 +22,7 @@
                     "columns": [
                         {"name": "fs.station_no", "alias": "fire_station_no"},
                         {"name": "fs.address", "alias": "fire_station_address"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(fs.geometry)", "alias": "geometry"},
+                        {"name": "fs.geometry", "alias": "geometry"},
                         {"name": "ems.ems_name", "alias": "ambulance_station_name"},
                         {"name": "ems.address", "alias": "ambulance_station_address"},
                         {"name": "ems.municipality"}

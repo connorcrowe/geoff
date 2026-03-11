@@ -35,3 +35,9 @@ attic/
 
 # Support
 /docs/images/ignore
+/docs/plans
+/docs/README.md
+gen_index.py
+
+# Drafts
+db/etl/transit_routes.sql

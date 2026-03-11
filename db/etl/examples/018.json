@@ -22,7 +22,7 @@
                         {"name": "address"},
                         {"name": "year_built"},
                         {"name": "type"},
-                        {"name": "geometry", "expression": "ST_AsGeoJSON(geometry)", "alias": "geometry"}
+                        {"name": "geometry", "alias": "geometry"}
                     ]
                 }
             }

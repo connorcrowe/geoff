@@ -55,20 +55,20 @@ export default function App() {
       }
 
       const layersWithIds = data.layers.map((layer, layerIdx) => {
-        const featuresWithId = layer.geojson?.features?.map((f, i) => ({
-          ...f,
-          id: `${layerIdx}-${i}`, // unique cross-layer id
-          properties: { ...f.properties, _id: `${layerIdx}-${i}` },
-        })) || [];
-
-        const mappedRows = layer.rows?.map((r, i) => ({
-          id: `${layerIdx}-${i}`,
-          ...Object.fromEntries(layer.columns.map((c, j) => [c, r[j]]))
-        })) || [];
+        // Map rows with IDs for table display
+        // Use the actual 'id' from the database query results
+        const mappedRows = layer.rows?.map((r, i) => {
+          const rowObj = Object.fromEntries(layer.columns.map((c, j) => [c, r[j]]));
+          // Ensure we have an id field from the query
+          if (!rowObj.id) {
+            console.warn(`Row ${i} in layer ${layer.name} missing 'id' field`);
+            rowObj.id = `${layerIdx}-${i}`; // Fallback to synthetic ID
+          }
+          return rowObj;
+        }) || [];
 
         return {
           ...layer,
-          geojson: { ...layer.geojson, features: featuresWithId },
           rows: mappedRows,
         }
       })
@@ -152,3 +152,4 @@ export default function App() {
     </div>
   )
 }
+
