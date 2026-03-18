@@ -39,8 +39,8 @@ def ingest_one_dataset(dataset_name):
     module = importlib.import_module(f"datasets.{dataset_name}")
     dfs, table_name, source_url = module.fetch()
 
-    if isinstance(dfs, dict): multi_table_ingest(dataset_name, dfs, table_name, source_url)
-    else: ingest_dataset_multi_table(dataset_name, dfs, table_name, source_url)
+    if isinstance(dfs, dict): ingest_dataset_multi_table(dataset_name, dfs, table_name, source_url)
+    else: ingest_dataset_single_table(dataset_name, dfs, table_name, source_url)
 
 def ingest_dataset_single_table(dataset_name, df, table_name, source_url):
     write_staging_with_meta(df, table_name, source_url)
