@@ -83,24 +83,6 @@
 
 ---
 
-## Module Status Summary
-
-For detailed implementation information, see [`tech/modules.md`](tech/modules.md).
-
-| Module | Status | Notes |
-|--------|--------|-------|
-| [`query_service`](tech/modules.md#query-service--orchestrator) | ✅ Production | Orchestrates full pipeline |
-| [`llm`](tech/modules.md#llm-integration) | ✅ Production | OpenAI GPT-4o-mini integration |
-| [`query_builder`](tech/modules.md#query-builder--complex) | ✅ Production | Full SQL feature set including aggregations |
-| [`parse_results`](tech/modules.md#parse-results) | ✅ Production | Executes and formats layers |
-| [`vector_db`](tech/modules.md#vector-db--important) | ✅ Production | Semantic search working well |
-| [`prompt_builder`](tech/modules.md#prompt-builder) | ✅ Production | Context assembly functional |
-| [`embed`](tech/modules.md#embedding-service) | ✅ Production | OpenAI embeddings integration |
-| [`db`](tech/modules.md#database-service) | ⚠️ Works | Single connection, not thread-safe |
-| [`routes`](tech/modules.md#api-routes) | ✅ Production | All endpoints functional |
-
----
-
 ## System Capabilities
 
 ### What Geoff Can Do Today
@@ -163,7 +145,6 @@ Merge all emergency service locations into one layer
 
 ### Technical Debt
 
-- **Database connection**: Critical. Single persistent connection, not thread-safe for concurrent requests
 - **Error messages**: Not user-friendly, don't explain what went wrong
 - **Test coverage**: No automated tests for `vector_db`, partial coverage elsewhere
 - **Logging**: Basic logging exists but could be more structured

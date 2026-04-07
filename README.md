@@ -9,7 +9,7 @@ Ask a question, get a map. A natural language interface for querying geospatial 
 ![](docs/images/recordings/geoff-09-05-small.gif)
 
 ---
-> 📘 **Latest: Version 0.4.0 - Vector Tile Rendering**
+> 📘 **Latest: Version 0.4.1 - Vector Tile Rendering**
 >
 > **Recent Changes:**
 > - **Vector Tiles**: Switched to MapLibre GL with MVT support for efficient rendering of large datasets

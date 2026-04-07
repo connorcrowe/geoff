@@ -6,6 +6,12 @@ As per [Semantic Versioning](https://semver.org/spec/v2.0.0.html) Geoff is an in
 
 ## [Unreleased]
 
+## 2026-04-07 - 0.4.1 - Threaded Connection Pool
+
+### Changed
+
+- Implemented connection pooling via psycopg2.pool.ThreadedConnectionPool to improve thread safety and connection resilience
+
 ## [2026-03-10] - 0.4.0 - Vector Tile Rendering
 
 ### Added
